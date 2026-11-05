@@ -289,3 +289,70 @@ porque un sitio externo cambió no dice nada sobre el código.
 ```
 
 Reparto: chasis 18, medios 8, informe 25, cálculo 49, memoria 16, web 18.
+
+## 14. ¿Cuántas piezas tolera el modelo? — medición
+
+Banco: `benchmarks/piezas.py`. Se generan N herramientas sintéticas con
+descripciones inequívocas; cada una devuelve su propio nombre. Se pide una tarea
+que solo una puede resolver y se comprueba cuál llamó el modelo.
+
+Modelo: `deepseek-ai/deepseek-v4.1-flash-1017`. Una pasada por nivel.
+
+| Herramientas | Aciertos | Precisión | Tokens/intento |
+|---|---|---|---|
+| 4 | 3/4 | 75% | 1.850 |
+| 8 | 7/8 | 88% | 2.633 |
+| 12 | 11/12 | 92% | 3.473 |
+| 16 | 16/16 | **100%** | 4.335 |
+| 20 | 19/20 | 95% | 4.757 |
+
+### El resultado contradice la hipótesis
+
+Se esperaba que la precisión **cayera** al crecer el número de herramientas, por
+saturación del contexto. No cae: con 16 herramientas fue del 100%, y con 20 del
+95%. La hipótesis de «el modelo se confunde con muchas herramientas» **no se
+sostiene** en este rango.
+
+### Pero el banco tenía un defecto, y hay que decirlo
+
+Los cuatro fallos fueron todos del mismo tipo:
+
+```
+T3 -> (ninguna)
+T3 -> (ninguna)
+T9 -> (ninguna)
+T3 -> (ninguna)
+```
+
+El modelo **no eligió la herramienta equivocada**: no llamó a ninguna. Respondió
+de memoria. Y mirando las dos tareas que fallaron, se entiende:
+
+- **T3**: «genera un código de color hexadecimal a partir de un nombre»
+- **T9**: «redondea 3.14159 a tres decimales»
+
+Son tareas que el modelo **puede resolver sin herramienta**. Que a veces decida
+hacerlo es razonable, no un error de selección.
+
+Conclusión: el banco **mezcla dos cosas** — «¿elige bien entre N opciones?» y
+«¿decide usar una herramienta?». La segunda no depende de N.
+
+Evidencia adicional de que no es saturación: T3 falló con 4, 8 y 12 herramientas,
+y **pasó** con 16. Un fallo que desaparece al haber más opciones no es
+saturación; es variabilidad del modelo.
+
+### Lo que sí se midió con solidez: el costo
+
+El gasto de contexto **sí** crece de forma lineal: de 1.850 a 4.757 tokens por
+intento entre 4 y 20 herramientas, unos **185 tokens por herramienta**.
+
+Ese es el límite real, y no es la confusión: es el costo. Con 20 herramientas se
+gastan ~2.900 tokens más por turno que con 4, en cada llamada.
+
+### Qué habría que corregir en el banco
+
+Para medir selección pura, las tareas deben ser **imposibles de responder sin la
+herramienta** (un dato que el modelo no puede saber). Así el fallo solo puede ser
+de elección. Es la misma lección que ya apareció en el banco de alucinación:
+una tarea que se puede resolver sin la herramienta mide otra cosa.
+
+Queda pendiente rehacerlo con tareas imposibles.
