@@ -1,0 +1,7 @@
+nombre = "web"
+version = "0.1.0"
+descripcion = "Consulta una fuente externa y devuelve su texto, para no responder de memoria."
+herramientas = [
+  { nombre = "leer_pagina", funcion = "leer_pagina", descripcion = "Descarga una página web y devuelve su texto legible, sin etiquetas HTML. Devuelve también el código de respuesta y la dirección final (por si hubo redirección). Úsalo cuando necesites un dato externo: una norma, un precio, una definición oficial. Nunca afirmes un dato externo sin haberlo leído con esta herramienta.", parametros = { url = "string" } },
+  { nombre = "buscar_texto", funcion = "buscar_texto", descripcion = "Busca una frase dentro de una página ya descargada y devuelve las líneas donde aparece, con su número. Sirve para citar con precisión en vez de parafrasear.", parametros = { url = "string", texto = "string" } },
+]

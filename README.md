@@ -103,6 +103,21 @@ El chasis la llama por referencia al módulo ya importado (reimportar el archivo
 crearía otra copia con sus propias variables globales, y la configuración se
 aplicaría a la copia que nadie usa).
 
+## El conjunto base
+
+Cinco piezas que todo negocio usa el primer día, más las de oficio:
+
+| Pieza | Para qué | Verificación |
+|---|---|---|
+| `archivos` | Leer lo que el cliente ya tiene | solo lectura, no sale de su carpeta |
+| `informe` | Producir el entregable | HTML imprimible o Markdown |
+| `calculo` | Hacer cuentas exactas | `Decimal`, sin `eval` |
+| `memoria` | Recordar entre sesiones | cada dato con su fuente |
+| `web` | Consultar fuera | rechaza `file://`, marca el contenido externo |
+
+Y las de oficio: `medios` (medir audio y video) y `dispositivo` (identificar
+un Android).
+
 ## Lo que ya está probado
 
 - **Documentos**: leyó un contrato y separó dato verificado, dato deducido y
@@ -139,6 +154,8 @@ sale.
 python -m pytest pruebas/ -q
 ```
 
-26 pruebas. Cubren el chasis (carga de medallas, piezas, ejecución del agente,
-herramientas que fallan sin tumbar el turno) y la pieza de medios (veredicto por
-contraste sobre videos de control generados con ffmpeg).
+133 pruebas. Cubren el chasis (carga de medallas y piezas, ejecución del agente,
+herramientas que fallan sin tumbar el turno), las cinco piezas base y la de
+medios. La pieza `web` se prueba contra un servidor HTTP local, no contra
+internet: una prueba que falla porque un sitio externo cambió no dice nada del
+código.

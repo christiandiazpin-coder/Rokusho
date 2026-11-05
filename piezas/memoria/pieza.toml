@@ -1,0 +1,9 @@
+nombre = "memoria"
+version = "0.1.0"
+descripcion = "Guarda y recupera lo que el agente aprendió del negocio, para no empezar de cero cada sesión."
+herramientas = [
+  { nombre = "recordar", funcion = "recordar", descripcion = "Guarda un dato duradero sobre el negocio: un nombre, una decisión, una preferencia, un procedimiento. No guardes aquí lo que cambia cada día; para eso está el informe. Cada entrada lleva una clave y una fuente.", parametros = { clave = "string", contenido = "string", fuente = "string" } },
+  { nombre = "recuperar", funcion = "recuperar", descripcion = "Busca en la memoria del negocio por palabra o frase. Devuelve las entradas que coinciden con su clave, su contenido y la fuente de donde salieron. Úsalo al empezar un encargo para no preguntar lo que ya se sabe.", parametros = { consulta = "string" } },
+  { nombre = "listar_memoria", funcion = "listar_memoria", descripcion = "Muestra todas las claves guardadas en la memoria, sin el contenido. Sirve para saber qué se sabe antes de preguntar.", parametros = {} },
+  { nombre = "olvidar", funcion = "olvidar", descripcion = "Borra una entrada de la memoria por su clave. Úsalo cuando un dato guardado ya no es cierto; dejarlo sería peor que no tenerlo.", parametros = { clave = "string" } },
+]
