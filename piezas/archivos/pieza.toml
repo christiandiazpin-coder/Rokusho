@@ -1,0 +1,8 @@
+nombre = "archivos"
+version = "0.1.0"
+descripcion = "Lee archivos y carpetas del espacio de trabajo del cliente."
+herramientas = [
+  { nombre = "listar", funcion = "listar", descripcion = "Lista los archivos de una carpeta del espacio de trabajo. Úsalo para saber qué material hay antes de pedir algo que no existe.", parametros = { ruta = "string" } },
+  { nombre = "leer", funcion = "leer", descripcion = "Lee un archivo de texto del espacio de trabajo. Devuelve el contenido con números de línea. Si el archivo es largo, usa el rango de líneas.", parametros = { ruta = "string", desde = "integer", hasta = "integer" } },
+  { nombre = "buscar", funcion = "buscar", descripcion = "Busca una palabra o frase dentro de los archivos del espacio de trabajo y devuelve las líneas donde aparece, con su archivo y número de línea. Sirve para citar con precisión.", parametros = { texto = "string" } },
+]

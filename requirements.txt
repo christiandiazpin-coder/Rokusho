@@ -1,0 +1,7 @@
+# El chasis solo necesita esto para hablar con cualquier proveedor OpenAI-compatible.
+requests>=2.31
+# La pieza «medios» (fotogramas) usa estas dos; sin ellas el resto funciona igual.
+Pillow>=10.0
+numpy>=1.26
+# Pruebas
+pytest>=7.4

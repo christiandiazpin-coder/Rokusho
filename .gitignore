@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.venv/
+trabajo/
+ejemplos/*/[0-9]*.mp4
+ejemplos/video/*.mp4
+.pytest_cache/
+*.log

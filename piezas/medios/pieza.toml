@@ -1,0 +1,8 @@
+nombre = "medios"
+version = "0.1.0"
+descripcion = "Mide archivos de audio y video: duración, resolución, códecs y loudness."
+herramientas = [
+  { nombre = "medir", funcion = "medir", descripcion = "Mide un archivo de audio o video con ffprobe: duración, resolución, códecs, canales y tasa de bits. Devuelve los datos reales; no los estima. Úsalo antes de afirmar que un render quedó bien.", parametros = { ruta = "string" } },
+  { nombre = "medir_nivel_audio", funcion = "medir_nivel_audio", descripcion = "Mide el nivel de audio real (EBU R128: LUFS integrado, pico, rango) de un archivo. Sirve para verificar que la mezcla no está baja ni saturada.", parametros = { ruta = "string" } },
+  { nombre = "fotograma", funcion = "fotograma", descripcion = "Extrae las estadísticas de un fotograma en un instante dado: luminancia media y porcentaje de píxeles claros. Sirve para detectar planos negros o fundidos donde no debería haberlos.", parametros = { ruta = "string", segundo = "number" } },
+]
