@@ -130,3 +130,35 @@ real).
   tope; `max_pasos` acota los turnos, no el costo.
 - **La pieza de archivos es de solo lectura**, pero las piezas futuras que
   escriban necesitarán su propia política de aprobación.
+
+## 7. La pieza «informe» y los dos defectos que aparecieron al usarla
+
+La pieza convierte Markdown en un informe HTML imprimible (o Markdown, en el
+mismo contenido). El agente escribe el texto; la pieza se encarga de la
+presentación. Decisión: si se le pidiera HTML directamente, la mitad de las
+veces inventaría etiquetas rotas.
+
+**Defecto 1: la tabla perdía la primera fila de datos.** El bucle saltaba dos
+líneas (cabecera y separador) y empezaba a leer desde la tercera, comiéndose la
+primera fila real. Se detectó mirando el informe renderizado: había puesto tres
+filas y aparecían dos. Un conversor así produce informes que *parecen* correctos
+y omiten un dato — el peor error posible en este proyecto.
+
+Corregido y cubierto por `test_tabla_conserva_todas_las_filas`, que comprueba
+fila por fila en vez de solo que exista una tabla.
+
+**Defecto 2: el separador `---` se imprimía como texto literal** en medio del
+informe, porque no había caso para él en el conversor. Detectado también en la
+imagen renderizada, no en el código. Corregido con caso propio para `<hr>` y
+cubierto por dos pruebas, una de ellas verificando que el separador de una tabla
+no se confunda con un separador horizontal.
+
+**Lo que esto confirma:** los dos defectos se vieron al *mirar el entregable*,
+no al leer el código ni al pasar las pruebas. La verificación visual del
+resultado es parte de la medición, no un adorno.
+
+## 8. Estado de las pruebas
+
+```
+51 passed
+```

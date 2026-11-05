@@ -1,0 +1,8 @@
+nombre = "informe"
+version = "0.1.0"
+descripcion = "Produce un informe entregable en HTML imprimible o Markdown, a partir de lo que el agente escribió."
+herramientas = [
+  { nombre = "crear_informe", funcion = "crear_informe", descripcion = "Crea un informe entregable y lo guarda en la carpeta de informes. Escribe el contenido en Markdown (títulos con #, listas con -, tablas con |). Devuelve la ruta real del archivo y sus datos medidos, para que puedas verificar que se escribió.", parametros = { titulo = "string", contenido = "string", formato = "string", cliente = "string" } },
+  { nombre = "listar_informes", funcion = "listar_informes", descripcion = "Lista los informes ya creados en la carpeta de informes, con su tamaño y fecha. Úsalo antes de crear uno para saber qué existe.", parametros = {} },
+  { nombre = "leer_informe", funcion = "leer_informe", descripcion = "Lee un informe ya creado, con su texto. Sirve para revisar lo que se entregó antes de darlo por bueno.", parametros = { nombre = "string" } },
+]
