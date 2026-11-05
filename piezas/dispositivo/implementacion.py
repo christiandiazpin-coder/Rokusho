@@ -48,18 +48,29 @@ FICHAS = {
         "android_fabrica": "Android 10 (nivel de API 29)",
         "treble": "sí, es compatible con GSI (imágenes genéricas de sistema)",
         "desbloqueo": (
-            "MediaTek: el desbloqueo se hace con mtkclient en modo BROM, no con "
-            "fastboot. Lenovo no publica un método oficial para este modelo."
+            "fastboot: los reportes de esta variante (2/32 GB) desbloquean con "
+            "«adb reboot bootloader» y «fastboot flashing unlock», confirmando con "
+            "volumen arriba. mtkclient/BROM queda como plan B si fastboot no coopera. "
+            "Lenovo no publica un método oficial para este modelo."
         ),
         "particularidad": (
-            "La variante de 2 GB de RAM va justa: varias GSI funcionan pero el "
-            "equipo se siente lento. La de 4 GB es la que da buen resultado."
+            "La variante de 2 GB de RAM va justa. Sirve para lo básico (navegar, "
+            "leer, ver video) pero no para multitarea. Hay compilaciones para este "
+            "equipo con ZRAM activado que bajan a la mitad el uso de memoria: son las "
+            "que hay que elegir en la variante de 2 GB. Para aplicaciones de Google, "
+            "conviene microG en vez de GApps, que pesa mucho menos."
         ),
         "riesgo": (
-            "Si el BROM está protegido, hay que abrir la tapa y usar un punto de "
-            "prueba (test point) para entrar. Eso implica desarmar el equipo."
+            "Dos trampas documentadas para este modelo: (1) las compilaciones de "
+            "LineageOS NO son compatibles con TWRP, hay que usar el recovery que viene "
+            "dentro del ZIP de instalación; (2) el equipo usa particiones de tipo "
+            "a-only (no SAR), así que una GSI genérica A/B no arranca. Con la imagen "
+            "equivocada el resultado es un bucle de arranque, recuperable desde fastboot."
         ),
-        "fuentes": "ficha del fabricante (PSREF), foro XDA y guías públicas del modelo",
+        "fuentes": (
+            "ficha del fabricante (PSREF de Lenovo) y el hilo de XDA del modelo "
+            "«Attempting to install GSI on 2nd Gen Lenovo Tab M10 HD (X306F 2/32GB)»"
+        ),
     },
 }
 
