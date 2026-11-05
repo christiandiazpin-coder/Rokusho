@@ -1,0 +1,11 @@
+nombre = "dispositivo"
+version = "0.2.0"
+descripcion = "Identifica y diagnostica un aparato MediaTek. Solo lectura hasta que se autorice."
+herramientas = [
+  { nombre = "listar_dispositivos", funcion = "listar_dispositivos", descripcion = "Lista los aparatos Android conectados por USB con su identificador y estado. Úsalo primero, antes de cualquier otra cosa.", parametros = {} },
+  { nombre = "identificar", funcion = "identificar", descripcion = "Lee el modelo, fabricante, versión de Android y estado del gestor de arranque de un aparato conectado. Devuelve los datos reales del equipo; no los deduce del nombre comercial.", parametros = { serie = "string" } },
+  { nombre = "estado_arranque", funcion = "estado_arranque", descripcion = "Comprueba si el gestor de arranque del aparato está desbloqueado o bloqueado. Es el dato que decide si el proyecto es viable.", parametros = { serie = "string" } },
+  { nombre = "herramientas", funcion = "herramientas", descripcion = "Comprueba qué herramientas de diagnóstico hay instaladas en este equipo (adb, fastboot, mtkclient) y sus versiones.", parametros = {} },
+  { nombre = "modo_mtk", funcion = "modo_mtk", descripcion = "Comprueba si el aparato MediaTek está en modo BROM/Preloader (el modo de bajo nivel con el que mtkclient lo detecta) leyendo el bus USB. No escribe nada.", parametros = {} },
+  { nombre = "ficha", funcion = "ficha", descripcion = "Devuelve la ficha técnica conocida de un modelo MediaTek (procesador, Android de fábrica, si es compatible con GSI/Treble y qué requiere para desbloquear). Solo para modelos verificados.", parametros = { modelo = "string" } },
+]
