@@ -130,3 +130,45 @@ def test_resultado_sin_intentos_no_divide_por_cero():
     assert r.seleccion == 0.0
     assert r.precision == 0.0
     assert r.tokens_por_intento == 0.0
+
+
+# ── el defecto que casi produjo una conclusión falsa ────────────────────────
+
+def test_las_descripciones_identifican_la_clave():
+    """Regresión: sin la clave en la descripción, la elección era azar.
+
+    En la primera versión del banco de confusibilidad las descripciones no decían
+    qué clave leía cada herramienta. El modelo no podía elegir por significado y
+    acertaba ~1 de 8. El resultado se leyó como «falla el modelo» cuando el fallo
+    era del banco.
+    """
+    import sys
+    from pathlib import Path as _P
+    raiz = _P(__file__).resolve().parent.parent
+    sys.path.insert(0, str(raiz))
+    from benchmarks import piezas_confusables as conf
+
+    datos = {"clave_0": "AAA-11111", "clave_1": "BBB-22222"}
+    ruta = _P("/tmp/no-se-usa-conf.json")
+    h = conf._crear_herramienta("leer_x", "Lee un registro.", "clave_1", ruta)
+    assert "clave_1" in h.descripcion, (
+        "la descripción debe decir qué clave lee; si no, no se puede elegir bien")
+
+
+def test_la_herramienta_correcta_no_esta_siempre_en_la_misma_posicion():
+    """Si la correcta fuera siempre la primera, la posición sería una pista."""
+    import random
+    import sys
+    from pathlib import Path as _P
+    raiz = _P(__file__).resolve().parent.parent
+    sys.path.insert(0, str(raiz))
+    from benchmarks import piezas_confusables as conf
+
+    carpeta = _P("/tmp/t_conf_pos")
+    carpeta.mkdir(parents=True, exist_ok=True)
+    posiciones = set()
+    for semilla in range(6):
+        conjunto = conf._conjunto_distintas(8, random.Random(semilla), carpeta)
+        nombres = [h.nombre for h in conjunto.herramientas]
+        posiciones.add(nombres.index(conjunto.herramienta_correcta))
+    assert len(posiciones) > 1, f"la posición correcta no varía: {posiciones}"

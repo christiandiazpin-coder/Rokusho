@@ -413,3 +413,89 @@ Los dos bancos de este proyecto (alucinación y piezas) fallaron primero por la
 misma razón: **la tarea se podía resolver sin la herramienta**, así que el
 resultado medía otra cosa. La corrección es la misma en ambos casos: hacer que el
 único camino al acierto pase por el mecanismo que se quiere medir.
+
+## 16. Banco de confusibilidad: un error de diseño que casi produjo una conclusión falsa
+
+Objetivo: aislar la confusibilidad. **N fijo (8), solo cambia cuánto se parecen
+las herramientas entre sí.** Con eso, cualquier diferencia es atribuible al
+parecido y no al tamaño.
+
+Tres condiciones:
+
+- **distintas**: nombres y descripciones sin relación (`consultar_clima`, `consultar_peso`).
+- **parecidas**: mismo prefijo, sufijo distinto (`leer_registro_local`,
+  `leer_registro_remoto`…). Es el caso real de un Rokusho con varias piezas.
+- **distractores**: la correcta está entre herramientas que suenan plausibles
+  pero no sirven.
+
+### Primera corrida: 0 % en dos condiciones. El error era del banco
+
+```
+distintas      0/3 (0%)
+parecidas      0/3 (0%)
+distractores   3/3 (100%)
+```
+
+Con 0 % en las dos primeras y 100 % en la tercera, la lectura tentadora es
+«el modelo falla cuando los nombres se parecen» o «falla cuando son distintos».
+Ambas serían falsas.
+
+La causa: **las descripciones de esa primera versión no decían qué clave leía
+cada herramienta.** Todas decían cosas como «Consulta la temperatura registrada
+en una ciudad», sin indicar a qué clave correspondían. El modelo no tenía forma
+de saber cuál servía: elegía al azar entre 8 opciones, que es un 12,5 % esperado
+por suerte. Los fallos lo confirman — llamaba a `consultar_moneda` cuando se
+pedía `clave_2`, es decir, a cualquiera.
+
+En la condición «distractores» acertó 3/3 simplemente porque la correcta se
+llamaba `leer_registro_maestro` y su descripción lo delataba.
+
+**Conclusión de esa corrida: no medía nada del modelo.** Medía que el banco
+estaba mal construido.
+
+Corregido: cada descripción termina con «Devuelve el valor de la clave «{clave}»»,
+de modo que la elección correcta existe y se puede hacer por significado.
+
+### La lección, que ya es la tercera vez en este proyecto
+
+Los tres bancos fallaron primero por la misma razón de fondo: **el camino para
+acertar no pasaba por lo que se quería medir.**
+
+| Banco | Defecto | Qué medía realmente |
+|---|---|---|
+| Alucinación | El reporte honesto tenía la misma forma que el deshonesto | Forma del texto |
+| Selección | La tarea se podía resolver de memoria | Conocimiento del modelo |
+| Confusibilidad | Las descripciones no identificaban la clave | Azar |
+
+Regla que queda para el proyecto: **antes de correr un banco, comprobar que la
+tasa esperada por azar sea distinta de la tasa real.** Si con 8 opciones se
+acierta ~12 %, el banco no está midiendo elección.
+
+Medida concreta añadida: `test_las_descripciones_identifican_la_clave` verifica
+que cada herramienta mencione la suya.
+
+### Segunda corrida, con el banco corregido
+
+| Condición | Aciertos | Precisión | Tokens/intento |
+|---|---|---|---|
+| distintas | 3/3 | 100% | 2.729 |
+| parecidas | 3/3 | 100% | 2.818 |
+| distractores | 3/3 | 100% | 2.737 |
+
+**Ni una sola elección equivocada, tampoco con nombres casi idénticos.**
+
+La conclusión de la primera corrida («el modelo falla con nombres parecidos»)
+habría sido completamente falsa. El modelo distingue `leer_registro_historico` de
+`leer_registro_local` cuando la descripción dice a qué clave corresponde.
+
+### Lo que esto sí y no demuestra
+
+**Demuestra:** con 8 herramientas, la confusibilidad de nombres no degrada la
+elección en este modelo.
+
+**No demuestra** que 20 herramientas parecidas sean igual de seguras: solo se
+midió con 8. Y el costo de contexto sigue siendo el límite real (~186 tokens por
+herramienta, ya medido).
+
+Queda como evidencia suficiente para no complicar el diseño de piezas por miedo a
+la confusión de nombres. El límite sigue siendo el gasto, no la precisión.
