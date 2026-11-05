@@ -356,3 +356,60 @@ de elección. Es la misma lección que ya apareció en el banco de alucinación:
 una tarea que se puede resolver sin la herramienta mide otra cosa.
 
 Queda pendiente rehacerlo con tareas imposibles.
+
+## 15. Selección de herramientas, banco corregido
+
+El banco anterior medía dos cosas a la vez. Este elimina la contaminación: los
+valores que se piden **se generan al azar en cada ejecución** y solo existen
+dentro de las herramientas. El modelo no puede saberlos de ninguna otra forma.
+Un fallo ya no puede ser «respondió de memoria»: si no llama, no acierta.
+
+Dos repeticiones por nivel, con datos distintos cada vez (120 peticiones en total).
+
+| Herramientas | Elección correcta | Acierto total | Tokens/intento |
+|---|---|---|---|
+| 4 | 8/8 (100%) | 8/8 (100%) | 2.037 |
+| 8 | 16/16 (100%) | 16/16 (100%) | 2.781 |
+| 12 | 24/24 (100%) | 24/24 (100%) | 3.525 |
+| 16 | 32/32 (100%) | 32/32 (100%) | 4.272 |
+| 20 | 40/40 (100%) | 40/40 (100%) | 5.011 |
+
+### Qué queda demostrado
+
+**La selección de herramientas no se degrada entre 4 y 20 opciones.** Ni una
+sola elección equivocada en 120 intentos. La hipótesis de saturación —que era mía
+y la defendí sin medirla— queda descartada para este modelo y este rango.
+
+**El costo sí crece, y de forma lineal:** de 2.037 a 5.011 tokens por intento
+entre 4 y 20 herramientas. Son **≈186 tokens por herramienta por turno**,
+coherente con la medición anterior (185).
+
+Consecuencia práctica: el límite de Rokusho no es la confusión del modelo, es el
+gasto de contexto. Con 20 herramientas cada turno cuesta ~3.000 tokens más que
+con 4, en cada llamada, para siempre.
+
+### La limitación de este resultado: efecto techo
+
+100% en todos los niveles tiene un problema de medición: **no distingue «muy
+bueno» de «perfecto»**. Si el modelo fuera excelente en 4 herramientas y
+simplemente bueno en 20, este banco no lo mostraría, porque ambas darían 100%.
+
+Para detectar degradación habría que:
+
+- subir mucho más el número de herramientas (40, 80), donde el costo ya sería
+  prohibitivo;
+- usar herramientas con descripciones **parecidas entre sí**, que es donde de
+  verdad se falla: no es lo mismo elegir entre «consultar_0» y «consultar_17»
+  que entre «leer_archivo» y «leer_archivo_remoto»;
+- introducir herramientas que suenen plausibles pero no sirvan para la tarea
+  (distractores), que es el caso real de un cliente con muchas piezas.
+
+El banco actual verifica que el mecanismo funciona y que el costo crece. **No**
+demuestra que 20 herramientas sean seguras en un caso real con nombres parecidos.
+
+### Lección de método
+
+Los dos bancos de este proyecto (alucinación y piezas) fallaron primero por la
+misma razón: **la tarea se podía resolver sin la herramienta**, así que el
+resultado medía otra cosa. La corrección es la misma en ambos casos: hacer que el
+único camino al acierto pase por el mecanismo que se quiere medir.
