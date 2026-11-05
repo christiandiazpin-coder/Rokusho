@@ -1,0 +1,10 @@
+nombre = "calculo"
+version = "0.1.0"
+descripcion = "Hace cálculos exactos sin preguntárselos al modelo: aritmética, porcentajes, estadística y fechas."
+herramientas = [
+  { nombre = "calcular", funcion = "calcular", descripcion = "Evalúa una expresión aritmética y devuelve el resultado exacto. Acepta +, -, *, /, //, %, **, paréntesis, y funciones: sqrt, abs, round, min, max, sum. Usa esto SIEMPRE que necesites una cuenta en vez de calcularla tú: los modelos se equivocan en aritmética y lo afirman con seguridad.", parametros = { expresion = "string" } },
+  { nombre = "porcentaje", funcion = "porcentaje", descripcion = "Calcula el porcentaje de una cantidad, o qué porcentaje representa un valor sobre un total. Evita el error clásico de confundir el porcentaje de un aumento con el de una bajada.", parametros = { operacion = "string", a = "number", b = "number" } },
+  { nombre = "estadistica", funcion = "estadistica", descripcion = "Calcula medidas sobre una lista de números: suma, media, mediana, mínimo, máximo, desviación estándar y total. Útil para resumir datos de una planilla sin inventar cifras.", parametros = { valores = "string" } },
+  { nombre = "dias_entre", funcion = "dias_entre", descripcion = "Calcula los días entre dos fechas (formato AAAA-MM-DD). Devuelve también años, meses aproximados y qué día de la semana cae. Sirve para plazos de contrato y vencimientos.", parametros = { desde = "string", hasta = "string" } },
+  { nombre = "sumar_fechas", funcion = "sumar_fechas", descripcion = "Suma o resta días, meses o años a una fecha (formato AAAA-MM-DD). Devuelve la fecha resultante y el día de la semana.", parametros = { fecha = "string", dias = "integer", meses = "integer", anios = "integer" } },
+]

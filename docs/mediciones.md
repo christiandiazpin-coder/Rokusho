@@ -162,3 +162,67 @@ resultado es parte de la medición, no un adorno.
 ```
 51 passed
 ```
+
+## 9. La pieza «calculo» y el defecto más grave de este turno
+
+La pieza existe porque un modelo de lenguaje se equivoca en aritmética y lo
+afirma con la misma seguridad que cuando acierta. No hay forma de saber, mirando
+el texto, si una cifra es correcta. La pieza no le pide cuentas al modelo: las
+ejecuta con `Decimal`.
+
+**Decisión de seguridad:** la expresión la escribe un modelo, que a su vez lee
+documentos de un cliente. Por eso **no se usa `eval`**. Se recorre el árbol
+sintáctico con lista blanca de nodos. Se comprobó el riesgo antes de escribir:
+
+```
+__import__('os').system('echo INTRUSO')   →  ejecutó el comando
+open('/etc/passwd').read()
+().__class__.__bases__[0].__subclasses__()
+```
+
+Con el evaluador cerrado, los nueve intentos de la batería de pruebas devuelven
+`ERROR` y no ejecutan nada.
+
+**Defecto encontrado: la limpieza de comas de miles rompía las llamadas.**
+
+La pieza quitaba **todas** las comas de la expresión para aceptar `1,500,000`.
+Efecto lateral: `min(5,2,8)` se convertía en `min(528)` y devolvía **528** en vez
+de **2**. Un separador de argumentos no es un separador de miles.
+
+Se detectó porque `min(5,2,8)` fallaba con «Decimal not iterable». El mensaje no
+señalaba la causa; hubo que inyectar una traza para ver que la expresión llegaba
+como un solo argumento con valor 528.
+
+Corregido: la coma solo se quita cuando separa grupos de tres dígitos
+(`(?<=\d),(?=\d{3}\b)`). Cubierto por `test_coma_como_separador_de_argumentos_no_se_borra`.
+
+**Lección:** una comodidad de entrada (aceptar "1,500,000") puede cambiar en
+silencio el significado de una expresión válida. La comodidad y la corrección
+tienen que probarse juntas.
+
+## 10. Lo que se midió con la pieza en uso real
+
+El agente recibió cuatro cuentas sobre un contrato. Todas sus cifras se
+verificaron de forma independiente:
+
+| Pregunta | Resultado del agente | Verificación |
+|---|---|---|
+| Total 12 meses | 10.200.000 | ✅ `850000 * 12` |
+| IVA 19% | 1.938.000 | ✅ `10200000 * 0.19` |
+| Total con IVA | 12.138.000 | ✅ `850000 * 12 * 1.19` |
+| Aviso 60 días antes | 2026-12-31 | ✅ `2027-03-01 - 60 días` |
+
+Además hizo dos cosas que importan más que las cifras:
+
+1. **Se negó a inventar la fecha de hoy.** Reportó «115 días desde 2026-11-05,
+   falta la fecha de hoy» en vez de dar por buena una fecha supuesta.
+2. **Marcó el 28 de febrero de 2027 como dato deducido**, aclarando que el
+   contrato no escribe esa fecha.
+
+Eso es la pieza haciendo su trabajo, y el agente respetando la regla.
+
+## 11. Estado de las pruebas
+
+```
+99 passed
+```
