@@ -24,10 +24,10 @@ comparación que le conviene.
 ## Propuesta de precios
 
 Los montos están en UF porque así factura el mercado empresarial chileno y no se
-desactualizan. Referencia usada: 1 UF ≈ $39.000 (verificar al cotizar; el precio
-en UF es el que vale).
+desactualizan. Referencia usada: 1 UF = $41.274,20 al 5 de noviembre de 2026 (verificar al
+cotizar; el precio en UF es el que vale).
 
-### 1. Piloto — 8 UF (≈ $312.000)
+### 1. Piloto — 8 UF (≈ $330.000)
 
 Un solo entregable, sobre material que el cliente ya tiene.
 
@@ -38,14 +38,14 @@ Un solo entregable, sobre material que el cliente ya tiene.
 **Para qué sirve comercialmente:** el cliente prueba sin compromiso grande y ve
 un resultado real. Si no le sirve, no hay contrato y nadie perdió mucho.
 
-### 2. Encargo — 18 UF por entregable (≈ $702.000)
+### 2. Encargo — 18 UF por entregable (≈ $743.000)
 
 - Informes múltiples sobre un mismo corpus (varios contratos, varias actas)
 - Cálculos y verificación de cifras incluidos
 - Entrega en 7 días hábiles
 - Dos rondas de correcciones
 
-### 3. Retainer mensual — 45 UF (≈ $1.755.000)
+### 3. Retainer mensual — 45 UF (≈ $1.857.000)
 
 Para el cliente que produce todos los meses:
 

@@ -739,3 +739,65 @@ en la suite.
 ```
 283 passed
 ```
+
+## 25. Medición de texto: un hueco que apareció al usar el agente
+
+Al pedirle al agente de marketing el mensaje de contacto, reportó **133 palabras
+y 782 caracteres**. Al verificarlo, el texto tenía **136 y 789**.
+
+No fue un fallo de la calculadora: el agente contó las palabras **a mano**,
+línea por línea, y usó la herramienta solo para **sumar** esos conteos. La suma
+era correcta; los sumandos no.
+
+Es el mismo patrón que ya apareció con la aritmética: la herramienta es fiable,
+el dato que entra no lo es. Y contar palabras parece tan trivial que nadie lo
+verifica, por eso el error pasa.
+
+### La pieza falta: se añadieron dos herramientas
+
+`contar_palabras` y `medir_texto`, en la pieza `calculo` (medir es medir, no
+calcular).
+
+`medir_texto` recibe un límite y comprueba **ambas medidas** —caracteres y
+palabras— porque cada canal usa una distinta: LinkedIn corta por caracteres, un
+correo formal se mide en palabras. Un texto que cabe en una y no en la otra
+produce un aviso de ambigüedad en vez de un veredicto falso.
+
+### Tres defectos propios, corregidos midiendo
+
+**1. El escape roto.** Un heredoc convirtió `\s` en `\\s`, que en regex es
+«barra literal + s». Resultado: caracteres con espacios y sin espacios daban el
+mismo número (52 y 52). Invisible hasta comparar las dos cifras.
+
+**2. El guion largo contaba como palabra.** La herramienta daba **138** palabras
+donde había **136**. Cada `—` sumaba una. Corregido: solo cuenta lo que tiene al
+menos un carácter alfanumérico.
+
+**3. Dos criterios distintos sin declararlos.** Con el arreglo anterior seguía
+habiendo 137 frente a 136 del `split()` normal. La diferencia es legítima —
+`split()` cuenta los signos sueltos y deja `[nombre]:` pegado— pero **una cifra
+que no se puede reproducir es indistinguible de un error**.
+
+Corregido informando los dos criterios cuando difieren:
+
+> NOTA: con el criterio de separar por espacios salen 7 (cuenta los signos
+> sueltos como palabras). Se informa 6, que es el criterio de un texto enviado.
+
+### Verificado con el agente real
+
+Con la herramienta disponible, el agente midió y escribió: **«No lo conté a
+mano»**. Además avisó por su cuenta de que el texto de 190 palabras no sirve para
+correo directo, cuyo tope es 150.
+
+### Un test mal planteado
+
+`test_medir_texto_detecta_que_se_pasa` usaba `"x" * 200`: 200 caracteres pero
+**una** palabra. Se pasaba solo en una medida y el veredicto era «AVISO», no
+«recortar». El test pedía un resultado que el caso no produce. Corregido y
+separado en dos casos: se pasa en ambas, y se pasa en una.
+
+## 26. Estado de las pruebas
+
+```
+294 passed
+```

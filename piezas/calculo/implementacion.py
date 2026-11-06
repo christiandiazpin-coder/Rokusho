@@ -372,3 +372,102 @@ def sumar_fechas(fecha: str, dias: int = 0, meses: int = 0, anios: int = 0) -> s
         f"({_DIAS[resultado.weekday()]})\n"
         f"  días transcurridos: {(resultado - base).days:,}"
     )
+
+
+# ─── Medición de texto ───────────────────────────────────────────────────────
+# Existe por un defecto medido: el agente escribió un mensaje de 136 palabras y
+# reportó 133. Contó a mano, y la calculadora solo sumó los conteos por línea
+# que él había preparado. La herramienta era correcta; el dato que entraba no.
+#
+# Contar palabras parece trivial y por eso nadie lo verifica. Un mensaje que se
+# pasa del límite de LinkedIn se corta sin aviso, y el error se descubre después
+# de enviarlo.
+
+
+def _palabras(texto: str) -> list[str]:
+    """Separa en palabras con un criterio explícito, no con `split()`.
+
+    Criterio (documentado porque no es el obvio):
+
+    1. Un marcador entre corchetes (`[nombre]`, `[empresa]`) cuenta como UNA
+       palabra, porque en el mensaje enviado se reemplaza por un nombre.
+    2. Los signos sueltos (`—`, `-`, `·`, `•`) **no** cuentan: no son palabras.
+    3. La puntuación pegada a una palabra no la divide: `sobran?` es una palabra.
+    4. Se conservan los guiones internos (`dígame-le`) y apóstrofos (`don't`).
+
+    Por qué no se usa `split()`: cuenta el guion largo como palabra y deja
+    `[nombre]:` pegado. La primera versión de esta función sí usaba `split()` y
+    daba 138 palabras donde había 136. Se detectó comparando contra el conteo
+    manual de un mensaje real, y es la razón de que este criterio esté escrito.
+    """
+    # Los marcadores entre corchetes se preservan como una unidad.
+    limpio = re.sub(r"\[([^\]]+)\]", r" \1 ", texto)
+    limpio = re.sub(r"[«»\"“”()¿?¡!.,;:]", " ", limpio)
+    return [p for p in limpio.split() if any(c.isalnum() for c in p)]
+
+
+def contar_palabras(texto: str) -> str:
+    if texto is None or not str(texto):
+        return "ERROR: el texto está vacío."
+    texto = str(texto)
+    lineas = texto.splitlines() or [texto]
+    conteo_lineas = [len(_palabras(l)) for l in lineas]
+    total = sum(conteo_lineas)
+
+    # Se informan los dos criterios porque difieren en textos con signos sueltos
+    # o marcadores. Ocultar la diferencia haría que el número pareciera un error
+    # cuando en realidad depende de qué se cuenta como palabra.
+    bruto = len(texto.split())
+    nota = ""
+    if bruto != total:
+        nota = (f"\n  NOTA: con el criterio de separar por espacios salen {bruto} "
+                f"(cuenta los signos sueltos como palabras). Se informa {total}, "
+                f"que es el criterio de un texto enviado.")
+
+    return (
+        f"Conteo del texto:\n"
+        f"  palabras: {total}\n"
+        f"  caracteres (con espacios): {len(texto)}\n"
+        f"  caracteres (sin espacios): {len(re.sub(r'\s', '', texto))}\n"
+        f"  líneas: {len(lineas)}\n"
+        f"  palabras por línea: {conteo_lineas}\n"
+        f"  suma de las líneas: {total} (debe coincidir con el total)\n"
+        f"  (contado por código, no a ojo){nota}"
+    )
+
+
+def medir_texto(texto: str, limite: int = 0) -> str:
+    if texto is None or not str(texto):
+        return "ERROR: el texto está vacío."
+    texto = str(texto)
+    palabras = len(_palabras(texto))
+    caracteres = len(texto)
+
+    lineas = [
+        f"Medición del texto:",
+        f"  palabras: {palabras}",
+        f"  caracteres (con espacios): {caracteres}",
+    ]
+
+    if limite and int(limite) > 0:
+        tope = int(limite)
+        # Se informa de las dos medidas porque los canales usan una u otra:
+        # LinkedIn corta por caracteres, un correo formal se mide en palabras.
+        cabe_car = caracteres <= tope
+        cabe_pal = palabras <= tope
+        lineas.append(f"  límite indicado: {tope}")
+        lineas.append(f"  cabe por caracteres: {'sí' if cabe_car else 'NO'} "
+                      f"(margen {tope - caracteres:+d})")
+        lineas.append(f"  cabe por palabras: {'sí' if cabe_pal else 'NO'} "
+                      f"(margen {tope - palabras:+d})")
+        if not cabe_car and not cabe_pal:
+            lineas.append("  VEREDICTO: se pasa del límite en ambas medidas. "
+                          "Hay que recortar antes de entregar.")
+        elif not cabe_car or not cabe_pal:
+            lineas.append("  AVISO: se pasa del límite en una de las dos medidas. "
+                          "Confirma en qué unidad mide el canal.")
+        else:
+            lineas.append("  VEREDICTO: cabe dentro del límite.")
+
+    lineas.append("  (medido por código, no estimado)")
+    return "\n".join(lineas)
