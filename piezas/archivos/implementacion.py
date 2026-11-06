@@ -24,15 +24,28 @@ def configurar(carpeta: Path) -> None:
     TRABAJO = carpeta.resolve()
 
 
+class FueraDelEspacio(Exception):
+    """La ruta pedida no está dentro del espacio de trabajo del cliente."""
+
+
 def _dentro(ruta_texto: str) -> Path:
-    """Resuelve una ruta y verifica que quede dentro del espacio de trabajo."""
+    """Resuelve una ruta y verifica que quede dentro del espacio de trabajo.
+
+    Se usa `resolve()`, que sigue los enlaces simbólicos: así un enlace dentro de
+    la carpeta que apunte fuera del sistema se rechaza igual que una ruta con
+    `..`. Sin eso, un enlace sería una puerta abierta al resto del disco.
+
+    Lanza `FueraDelEspacio`, que las herramientas convierten en mensaje. Antes
+    lanzaba `ValueError` y el chasis lo reportaba como «la herramienta falló»,
+    mezclando un rechazo deliberado con una herramienta rota.
+    """
     if not ruta_texto or not ruta_texto.strip():
-        raise ValueError("la ruta viene vacía")
+        raise FueraDelEspacio("la ruta viene vacía")
     candidata = (TRABAJO / ruta_texto).resolve()
     try:
         candidata.relative_to(TRABAJO)
     except ValueError:
-        raise ValueError(
+        raise FueraDelEspacio(
             f"«{ruta_texto}» queda fuera del espacio de trabajo. "
             "Solo puedes leer lo que está dentro."
         ) from None
@@ -47,7 +60,10 @@ def _relativa(ruta: Path) -> str:
 
 
 def listar(ruta: str = ".") -> str:
-    carpeta = _dentro(ruta)
+    try:
+        carpeta = _dentro(ruta)
+    except FueraDelEspacio as e:
+        return f"RECHAZADO: {e}"
     if not carpeta.exists():
         return f"ERROR: no existe «{ruta}»."
     if not carpeta.is_dir():
@@ -69,7 +85,10 @@ def listar(ruta: str = ".") -> str:
 
 
 def leer(ruta: str, desde: int = 1, hasta: int = 0) -> str:
-    archivo = _dentro(ruta)
+    try:
+        archivo = _dentro(ruta)
+    except FueraDelEspacio as e:
+        return f"RECHAZADO: {e}"
     if not archivo.exists():
         return f"ERROR: no existe «{ruta}»."
     if not archivo.is_file():

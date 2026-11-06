@@ -622,3 +622,64 @@ de desbloqueo supuesto es exactamente cómo se convierte un equipo en un ladrill
 ```
 211 passed
 ```
+
+## 21. Pruebas de `piezas/archivos`: la puerta del sistema
+
+Es la pieza más usada y la que tiene la única restricción de seguridad del
+proyecto: el agente no puede leer fuera de la carpeta del cliente.
+
+**36 pruebas.** Lo que protegen no es que lea bien —eso es fácil— sino que no se
+escape: ni por `..`, ni por ruta absoluta, ni por enlace simbólico.
+
+### El caso sutil: enlaces simbólicos
+
+Se probó explícitamente un enlace dentro de la carpeta que apunta a un archivo de
+fuera. `resolve()` sigue el enlace, así que el escape se detecta y se rechaza.
+Sin `resolve()`, un enlace sería una puerta abierta al resto del disco.
+
+### Defecto corregido: un rechazo no es un fallo
+
+`_dentro()` lanzaba `ValueError`. El chasis lo atrapaba y el agente veía:
+
+```
+ERROR: «leer» falló: ValueError: «enlace.txt» queda fuera del espacio de trabajo
+```
+
+Eso mezcla dos cosas distintas: **un rechazo deliberado de seguridad** con **una
+herramienta rota**. Ahora la pieza tiene su propia excepción y devuelve:
+
+```
+RECHAZADO: «enlace.txt» queda fuera del espacio de trabajo. Solo puedes leer lo que está dentro.
+```
+
+La diferencia importa: ante un fallo el agente debe probar otra vía; ante un
+rechazo debe respetarlo y no intentar rodearlo. El prompt del chasis ya dice que
+un DENEGADO no se elude, pero eso solo sirve si el mensaje lo distingue.
+
+### Las pruebas discriminan (verificado)
+
+Un conjunto de 36 pruebas que pasan todas a la primera es sospechoso. Se
+comprobó debilitando la seguridad a propósito en una copia: **8 pruebas fallan**.
+Son reales, no decorativas.
+
+| Prueba debilitada | Falla sin la protección |
+|---|---|
+| `../secreto.txt` | sí |
+| `/etc/passwd` | sí |
+| `documentos/../../secreto.txt` | sí |
+| listar `..`, `../`, `/etc` | sí (3) |
+| enlace simbólico | sí |
+| rechazo ≠ fallo | sí |
+
+### Otros casos cubiertos
+
+Lectura con números de línea y rangos, aviso de líneas restantes, archivos
+binarios (PNG) que no revientan, archivos sobre el límite de tamaño, `desde` más
+allá del final, búsqueda que ignora mayúsculas, búsqueda que **no** encuentra
+nada de fuera del espacio, omisión de archivos ocultos, y búsqueda sin carpeta.
+
+## 22. Estado de las pruebas
+
+```
+247 passed
+```
