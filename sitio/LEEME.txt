@@ -1,0 +1,38 @@
+PAQUETE PARA PUBLICAR
+=====================
+
+Contenido:
+  index.html                    la pagina de venta
+  muestra/ejemplo-informe.html  el informe de ejemplo
+
+QUE NO SUBIR:
+  docs/precio-y-venta.md        documento interno; dice que los precios
+                                no estan validados por el mercado
+  docs/publicar.md              instrucciones internas
+  el resto del repo             codigo, pruebas, medallas
+
+COMO PROBARLO EN TU EQUIPO:
+  cd sitio
+  python3 -m http.server 8000
+  abrir http://localhost:8000
+
+COMO SUBIRLO A GITHUB PAGES:
+  1. Crear una rama huerfana (no toca tu rama de trabajo):
+       git checkout --orphan gh-pages
+       git rm -rf .
+       cp -r ../sitio/* .
+       git add index.html muestra/
+       git commit -m "Pagina de venta"
+       git push origin gh-pages
+       git checkout main
+  2. En GitHub: Settings -> Pages -> Branch: gh-pages -> / (root) -> Save
+  3. Queda en https://<tu-usuario>.github.io/rokusho/
+
+VERIFICAR DESPUES DE PUBLICAR:
+  - la pagina carga
+  - el boton "Ver un informe completo de ejemplo" abre el informe
+  - el boton "Hablar del piloto" abre el correo con el asunto puesto
+  - https://<url>/precio-y-venta.md da 404 (lo interno no se publico)
+
+NOTA SOBRE PESOS: los montos usan la UF del 5-11-2026 ($41.274,20).
+Al cotizar, verificar el valor del dia.
