@@ -499,3 +499,71 @@ herramienta, ya medido).
 
 Queda como evidencia suficiente para no complicar el diseño de piezas por miedo a
 la confusión de nombres. El límite sigue siendo el gasto, no la precisión.
+
+## 17. Capa de confiabilidad: auditoría de afirmaciones y procedencia de datos
+
+Portado del proyecto Umbra, donde se midió sobre episodios reales. Dos módulos
+nuevos en el chasis:
+
+- `chasis/auditoria.py` — contrasta lo que el reporte **afirma** con lo que el
+  turno **hizo**. Si una frase dice «verifiqué» y ninguna herramienta lo
+  comprobó, se marca.
+- `chasis/procedencia.py` — etiqueta cada dato concreto (cifra, ruta, archivo)
+  como `VERIFICADO` si aparece en la salida de una herramienta, o `HIPOTESIS` si
+  no. Es el mecanismo de monitoreo de fuente: distinguir lo leído de lo supuesto.
+
+**La auditoría no se pide: ocurre siempre.** El turno se cierra con
+`_cerrar()`, que audita y anexa los avisos al reporte. Un agente que puede
+entregar sin ser auditado acaba entregando afirmaciones sin respaldo.
+
+### Los dos defectos que aparecieron al probarlo con el modelo real
+
+**Defecto 1: no detectaba cifras inventadas.** `«El total es de 10.200.000
+pesos»` pasaba sin aviso, porque ninguna palabra de la lista de afirmaciones
+estaba en la frase. No decía «verifiqué», pero afirmaba un dato con la misma
+fuerza. Corregido añadiendo los verbos que presentan un dato como establecido
+(`es de`, `asciende`, `equivale`, `representa`…) cuando hay cifras.
+
+**Defecto 2: seis falsos positivos en un turno real.** El auditor marcó las seis
+afirmaciones de un reporte correcto. La causa: `listar_informes` respondió «No
+hay ningún informe: la carpeta no existe», y el patrón de fallo incluía `no hay`
+sin anclar al inicio. Es decir: **una respuesta negativa válida se contaba como
+herramienta rota**, y eso invalidaba todo el turno.
+
+Corregido distinguiendo dos cosas que no son lo mismo:
+
+| Salida | Qué es | Cómo se trata |
+|---|---|---|
+| `ERROR: no existe «x»` | fallo real | invalida la afirmación |
+| `No se encontró «IVA»` | resultado negativo | respuesta válida |
+| `No hay ningún informe` | respuesta informativa | respuesta válida |
+
+Un resultado negativo no es una herramienta rota. La búsqueda que no encuentra
+nada **sí buscó**.
+
+### Medición antes y después
+
+| | Avisos |
+|---|---|
+| Antes de corregir el criterio de fallo | 6 (todos falsos) |
+| Después | **0** |
+
+El riesgo de un auditor con falsos positivos es peor que no tener auditor: el
+usuario aprende a ignorar los avisos, y entonces el aviso verdadero tampoco se
+lee.
+
+### Deduplicación de datos
+
+Un mismo número escrito como `850.000 pesos` y `850.000` se contaba dos veces,
+inflando los totales del resumen. Ahora se deduplica por **valor numérico**, no
+por texto.
+
+También se amplió el patrón de cifras para reconocer el RUT (`76.543.210-8`),
+que antes se escapaba: es justo el dato que más se inventa en un informe
+chileno.
+
+## 18. Estado de las pruebas
+
+```
+178 passed
+```

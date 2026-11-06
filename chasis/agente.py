@@ -14,6 +14,8 @@ import json
 from dataclasses import dataclass, field
 from typing import Any
 
+from . import auditoria as _auditoria
+from . import procedencia as _procedencia
 from .config import Ajustes
 from .ia import ClienteIA, ErrorProveedor, Respuesta
 from .medalla import Medalla
@@ -32,6 +34,9 @@ Eres un agente de Rokusho. Trabajas para una empresa real y tu salida la lee una
 3. Si una herramienta falla, lee el error y prueba otra vía. No repitas la misma llamada
    esperando otro resultado, y no afirmes que hiciste algo que la herramienta rechazó.
 4. Antes de cerrar, di qué hiciste, qué quedó pendiente y qué necesitas de la persona.
+4b. Cada cifra, ruta o dato concreto que escribas debe venir de la salida de una
+   herramienta. Si lo deduces, dilo con la palabra «deducido» o «estimo»: el
+   sistema marca como HIPOTESIS todo dato que no pueda rastrear.
 5. Responde en español, en el registro del rubro de tu medalla.
 """
 
@@ -55,10 +60,18 @@ class Turno:
     modelo: str = ""
     tokens_entrada: int = 0
     tokens_salida: int = 0
+    # Auditoría del propio turno: se calcula al cerrarlo, no se pide.
+    avisos: list = field(default_factory=list)
+    procedencia: dict = field(default_factory=dict)
 
     @property
     def uso_herramientas(self) -> list[str]:
         return [p.herramienta for p in self.pasos]
+
+    @property
+    def limpio(self) -> bool:
+        """Verdadero si el reporte no tiene afirmaciones sin respaldo."""
+        return not self.avisos
 
 
 class Agente:
@@ -112,11 +125,9 @@ class Agente:
             modelo_usado = respuesta.modelo
 
             if not respuesta.llamadas:
-                return Turno(
-                    respuesta=respuesta.contenido.strip(),
-                    pasos=pasos, modelo=modelo_usado,
-                    tokens_entrada=entrada, tokens_salida=salida,
-                )
+                return self._cerrar(
+                    respuesta.contenido.strip(), pasos, modelo_usado,
+                    entrada, salida)
 
             mensajes.append({
                 "role": "assistant",
@@ -144,8 +155,31 @@ class Agente:
         cierre = self.cliente.conversar(mensajes, None)
         entrada += cierre.tokens_entrada
         salida += cierre.tokens_salida
-        return Turno(cierre.contenido.strip(), pasos, cierre.modelo or modelo_usado,
-                     entrada, salida)
+        return self._cerrar(cierre.contenido.strip(), pasos,
+                            cierre.modelo or modelo_usado, entrada, salida)
+
+    def _cerrar(self, respuesta: str, pasos: list[Paso], modelo: str,
+                entrada: int, salida: int) -> Turno:
+        """Cierra el turno auditando lo que el reporte afirma.
+
+        La auditoría no se pide: ocurre siempre. Un agente que puede entregar sin
+        ser auditado acaba entregando afirmaciones sin respaldo, y eso es
+        exactamente lo que este proyecto existe para evitar.
+        """
+        turno = Turno(respuesta=respuesta, pasos=pasos, modelo=modelo,
+                      tokens_entrada=entrada, tokens_salida=salida)
+        try:
+            auditoria = _auditoria.auditar(turno)
+            turno.avisos = auditoria.avisos
+            if not auditoria.limpia:
+                turno.respuesta = respuesta + "\n" + _auditoria.formatear(auditoria)
+            salidas = [p.resultado or "" for p in pasos]
+            proc = _procedencia.etiquetar(respuesta, salidas)
+            turno.procedencia = _procedencia.resumen(proc)
+        except Exception:  # noqa: BLE001 - auditar no debe tumbar la entrega
+            # Si la auditoría falla, el turno se entrega sin ella, pero se dice.
+            turno.procedencia = {"error": "la auditoría no pudo ejecutarse"}
+        return turno
 
     def _desglosar(self, llamada: dict) -> tuple[str, dict[str, Any], str]:
         funcion = llamada.get("function") or {}
