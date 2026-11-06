@@ -1,0 +1,13 @@
+CONTRATO DE ARRIENDO COMERCIAL
+Entre Inversiones Demo SpA (en adelante "el Arrendador")
+y Taller Ejemplo Ltda. (en adelante "el Arrendatario").
+
+PRIMERO: El Arrendador entrega el local comercial ubicado en calle Ficticia 123.
+SEGUNDO: El plazo es de 24 meses, desde el 1 de abril de 2026.
+TERCERO: La renta mensual es de 1.200.000 pesos, pagadera los primeros 5 días de cada mes.
+CUARTO: La renta se reajustará anualmente según el IPC.
+QUINTO: El Arrendatario no podrá subarrendar sin autorización escrita.
+SEXTO: Cualquiera de las partes puede poner término con 90 días de aviso escrito.
+
+NOTA: Este es un documento de EJEMPLO, creado para mostrar el formato de entrega.
+Las partes, el local y los montos son ficticios.

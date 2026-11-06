@@ -1,292 +1,1519 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-CL">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rokusho — informes y análisis con datos verificables</title>
 <meta name="description" content="Informes con cita de origen en cada dato, cifras calculadas y ausencias declaradas. Piloto desde 8 UF.">
+<meta name="theme-color" content="#F6F2E9">
+<link rel="canonical" href="https://christiandiazpin-coder.github.io/Rokusho/">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
 <meta property="og:title" content="Informes que puedes verificar, no que tienes que creer">
 <meta property="og:description" content="Cada dato lleva la cita de dónde salió. Las cifras están calculadas, no estimadas.">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:url" content="https://christiandiazpin-coder.github.io/Rokusho/">
+<meta property="og:site_name" content="Rokusho">
+<meta property="og:image" content="https://christiandiazpin-coder.github.io/Rokusho/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Informes que puedes verificar, no que tienes que creer.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://christiandiazpin-coder.github.io/Rokusho/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..700;1,400&family=Newsreader:ital,opsz,wght@1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --tinta: #14181f;
-    --tenue: #5b6472;
-    --linea: #e2e6ec;
-    --acento: #1f4e79;
-    --fondo: #ffffff;
-    --suave: #f6f8fa;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ============================================================
+   ROKUSHO · sistema visual v2
+   Tinta sobre papel. El documento es el protagonista.
+   ============================================================ */
+
+:root {
+  /* color */
+  --papel:        #F6F2E9;
+  --papel-alto:   #FCFAF5;
+  --noche:        #14110C;
+  --tinta:        #17140F;
+  --tinta-suave:  #5A5245;
+  --tinta-tenue:  #6E6455;
+  --linea:        #E0D8C8;
+  --linea-fuerte: #CCC1AA;
+  --linea-control: #94886B;
+  --brasa:        #8E3517;
+  --brasa-clara:  #C4623D;
+  --verde:        #26603F;
+
+  /* tipografía */
+  --display: "Inter Tight", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --texto:   "Inter Tight", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --serif:   "Newsreader", Georgia, "Times New Roman", serif;
+  --mono:    "JetBrains Mono", "SF Mono", Consolas, monospace;
+
+  --t-hero:   clamp(2.45rem, 5.6vw, 4.15rem);
+  --t-h2:     clamp(1.8rem, 3.3vw, 2.65rem);
+  --t-h3:     clamp(1.02rem, 1.5vw, 1.14rem);
+  --t-entrada:clamp(1.06rem, 1.9vw, 1.28rem);
+  --t-cuerpo: clamp(1rem, 1.4vw, 1.0625rem);
+  --t-menudo: 1rem;
+
+  /* espacio */
+  --ancho: 1180px;
+  --costado: clamp(20px, 4vw, 40px);
+  --seccion: clamp(72px, 10vw, 148px);
+  --radio: 4px;
+
+  /* movimiento */
+  --salida: cubic-bezier(.22, 1, .36, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 92px;
+}
+
+body {
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--texto);
+  font-size: var(--t-cuerpo);
+  line-height: 1.66;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* grano de papel: una sola capa fija, sin repintado al hacer scroll */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: #E8D3B4; color: var(--tinta); }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--brasa);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- utilidades ---------- */
+
+.envoltura {
+  width: 100%;
+  max-width: var(--ancho);
+  margin-inline: auto;
+  padding-inline: var(--costado);
+}
+
+.salto {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--noche);
+  color: var(--papel);
+  padding: 12px 20px;
+  z-index: 100;
+  font-size: .9rem;
+}
+.salto:focus { left: 12px; top: 12px; }
+
+.solo-lector {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- botones ---------- */
+
+.boton {
+  --bg: var(--brasa);
+  --fg: #FDF9F2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--bg);
+  border-radius: 2px;
+  padding: 15px 26px;
+  font-family: var(--texto);
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: -.005em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .25s var(--salida), box-shadow .25s var(--salida), background-color .2s linear, color .2s linear;
+  box-shadow: 0 1px 0 rgba(23, 20, 15, .18);
+}
+.boton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -10px rgba(142, 53, 23, .65), 0 2px 0 rgba(23, 20, 15, .2);
+}
+.boton:active { transform: translateY(0); }
+
+.boton--fantasma {
+  --bg: transparent;
+  --fg: var(--tinta);
+  border-color: var(--linea-control);
+  box-shadow: none;
+}
+.boton--fantasma:hover {
+  background: var(--papel-alto);
+  border-color: var(--tinta);
+  box-shadow: 0 8px 18px -12px rgba(23, 20, 15, .5);
+}
+
+.boton--claro {
+  --bg: var(--papel-alto);
+  --fg: var(--tinta);
+  border-color: var(--papel-alto);
+}
+
+.boton--mini { padding: 11px 18px; font-size: .875rem; }
+
+.boton__flecha {
+  display: inline-block;
+  transition: transform .3s var(--salida);
+}
+.boton:hover .boton__flecha { transform: translateX(3px); }
+
+/* ---------- cabecera ---------- */
+
+.cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--papel); /* fallback si no hay color-mix */
+  background: color-mix(in srgb, var(--papel) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s linear, background-color .3s linear;
+}
+.cabecera.esta-pegada {
+  border-bottom-color: var(--linea);
+  background: var(--papel);
+  background: color-mix(in srgb, var(--papel) 96%, transparent);
+}
+/* sin backdrop-filter, el header fluido sería ilegible: se vuelve opaco */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cabecera, .cabecera.esta-pegada { background: var(--papel); }
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 44px);
+  height: 72px;
+}
+
+.marca {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: .01em;
+}
+.marca__punto {
+  display: inline-block;
+  width: 5px; height: 5px;
+  background: var(--brasa);
+  border-radius: 50%;
+  transform: translateY(-1px);
+}
+.marca__lema {
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+  padding-left: 10px;
+  margin-left: 2px;
+  border-left: 1px solid var(--linea-fuerte);
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
+  margin-left: auto;
+}
+.menu a {
+  position: relative;
+  text-decoration: none;
+  font-size: .895rem;
+  color: var(--tinta-suave);
+  padding-block: 4px;
+  transition: color .2s linear;
+}
+.menu a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .28s var(--salida);
+}
+.menu a:hover, .menu a[aria-current="true"] { color: var(--tinta); }
+.menu a:hover::after, .menu a[aria-current="true"]::after { transform: scaleX(1); }
+
+.barra__accion { margin-left: auto; }
+
+/* progreso de lectura */
+.progreso {
+  position: absolute;
+  left: 0; bottom: -1px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--brasa);
+  opacity: .75;
+}
+
+/* ---------- portada ---------- */
+
+.portada {
+  position: relative;
+  padding-block: clamp(52px, 7vw, 104px) clamp(48px, 6vw, 88px);
+  overflow: hidden;
+}
+
+.portada__rejilla {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(400px, .8fr);
+  gap: clamp(32px, 5vw, 76px);
+  align-items: center;
+}
+
+.sobretitulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: .705rem;
+  letter-spacing: .19em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+  margin-bottom: 26px;
+}
+.sobretitulo::before {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: var(--brasa);
+  flex: none;
+}
+
+.portada h1 {
+  font-family: var(--display);
+  font-size: var(--t-hero);
+  line-height: 1.02;
+  letter-spacing: -.038em;
+  font-weight: 500;
+  text-wrap: balance;
+  max-width: 17ch;
+  margin-bottom: 26px;
+}
+.portada h1 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -.018em;
+  color: var(--brasa);
+  /* corrección óptica: la serif itálica se ve más chica */
+  font-size: 1.055em;
+}
+
+.entradilla {
+  font-size: var(--t-entrada);
+  line-height: 1.55;
+  color: var(--tinta-suave);
+  max-width: 46ch;
+  text-wrap: pretty;
+  margin-bottom: 34px;
+}
+.entradilla strong { color: var(--tinta); font-weight: 600; }
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.letra-chica {
+  margin-top: 26px;
+  font-size: .82rem;
+  color: var(--tinta-tenue);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.letra-chica svg { flex: none; }
+
+/* ---------- espécimen: el dato, tal cual ---------- */
+
+.especimen {
+  position: relative;
+  background: var(--papel-alto);
+  border: 1px solid var(--linea);
+  border-radius: 3px;
+  box-shadow:
+    0 1px 0 rgba(23,20,15,.04),
+    0 18px 40px -32px rgba(23,20,15,.55),
+    0 44px 80px -60px rgba(23,20,15,.4);
+  padding: 0 0 20px;
+  transform: rotate(-.45deg);
+}
+
+.especimen__barra {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--linea);
+  font-family: var(--mono);
+  font-size: .715rem;
+  color: var(--tinta-tenue);
+  letter-spacing: .02em;
+}
+.especimen__barra .punto {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--verde);
+  flex: none;
+  box-shadow: 0 0 0 3px rgba(38,96,63,.12);
+}
+.especimen__archivo { color: var(--tinta); }
+.especimen__linea { margin-left: auto; white-space: nowrap; }
+
+.especimen blockquote {
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.5;
+  color: var(--tinta);
+  padding: 20px 20px 16px;
+  text-wrap: pretty;
+}
+
+.especimen figcaption {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 20px 16px;
+  font-size: .79rem;
+  color: var(--tinta-suave);
+  flex-wrap: wrap;
+}
+
+.especimen__enlace {
+  color: var(--brasa);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(142, 53, 23, .35);
+  transition: border-color .2s linear, color .2s linear;
+}
+.especimen__enlace:hover { border-bottom-color: var(--brasa); }
+
+.especimen__vacio {
+  margin: 0 16px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--brasa);
+  background: #F4ECE0;
+  font-size: .855rem;
+  line-height: 1.5;
+  color: var(--tinta-suave);
+}
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: .655rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.etiqueta--ok { background: rgba(38,96,63,.1); color: var(--verde); }
+.etiqueta--vacio { background: rgba(142,53,23,.09); color: var(--brasa); }
+
+/* ---------- franja de hechos ---------- */
+
+.franja {
+  border-block: 1px solid var(--linea);
+  background: var(--papel-alto);
+}
+.franja__rejilla {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.franja__item {
+  padding: clamp(20px, 2.6vw, 30px) 0;
+  padding-inline: clamp(0px, 2vw, 26px);
+}
+.franja__item + .franja__item { border-left: 1px solid var(--linea); }
+.franja__item dt {
+  font-family: var(--mono);
+  font-size: .665rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+  margin-bottom: 7px;
+}
+.franja__item dd {
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -.012em;
+  line-height: 1.35;
+}
+
+/* ---------- capítulos ---------- */
+
+.capitulo {
+  padding-block: var(--seccion);
+  border-top: 1px solid var(--linea);
+}
+.capitulo--primero { border-top: 0; }
+
+.capitulo__rejilla {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+
+.riel {
+  position: sticky;
+  top: 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.riel__num {
+  font-family: var(--display);
+  font-size: 2.6rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: #98896F;
+  font-variant-numeric: tabular-nums;
+}
+.riel__rotulo {
+  font-family: var(--mono);
+  font-size: .655rem;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--brasa);
+  line-height: 1.4;
+}
+.riel__num::after {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 1px;
+  background: var(--linea-fuerte);
+  margin-top: 12px;
+}
+
+.capitulo h2 {
+  font-family: var(--display);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -.032em;
+  text-wrap: balance;
+  max-width: 26ch;
+  margin-bottom: clamp(22px, 3vw, 34px);
+}
+.capitulo h2 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--brasa);
+  letter-spacing: -.015em;
+  font-size: 1.05em;
+}
+
+.prosa {
+  max-width: 63ch;
+  display: grid;
+  gap: 18px;
+  color: var(--tinta-suave);
+}
+.prosa p { text-wrap: pretty; }
+.prosa strong { color: var(--tinta); font-weight: 600; }
+
+.tirada {
+  margin-top: clamp(28px, 4vw, 44px);
+  padding-top: 22px;
+  border-top: 1px solid var(--linea);
+  max-width: 30ch;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.28rem, 2.3vw, 1.72rem);
+  line-height: 1.32;
+  letter-spacing: -.012em;
+  color: var(--tinta);
+  text-wrap: balance;
+}
+.tirada span {
+  display: block;
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: .665rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--brasa);
+  margin-bottom: 12px;
+}
+
+/* ---------- lista de garantías ---------- */
+
+.garantias {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--linea);
+  border: 1px solid var(--linea);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.garantias li {
+  background: var(--papel-alto);
+  padding: clamp(22px, 3vw, 32px);
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 16px;
+  transition: background-color .3s linear;
+}
+.garantias li:hover { background: #FFFDF9; }
+
+.garantias .marca-si,
+.garantias .marca-no {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 3px;
+}
+.garantias .marca-si { background: rgba(38,96,63,.11); color: var(--verde); }
+.garantias .marca-no { background: rgba(142,53,23,.1); color: var(--brasa); }
+
+.garantias h3 {
+  display: block;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: var(--t-h3);
+  letter-spacing: -.014em;
+  line-height: 1.35;
+  margin-bottom: 6px;
+  color: var(--tinta);
+}
+.garantias p {
+  font-size: .925rem;
+  line-height: 1.6;
+  color: var(--tinta-suave);
+  text-wrap: pretty;
+}
+
+/* ---------- pasos ---------- */
+
+.pasos {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 10px;
+  counter-reset: paso;
+  border-top: 1px solid var(--linea);
+}
+.pasos li {
+  position: relative;
+  padding: clamp(22px, 3vw, 34px) clamp(16px, 2vw, 26px) clamp(22px, 3vw, 34px) 0;
+  border-right: 1px solid var(--linea);
+}
+.pasos li:last-child { border-right: 0; padding-right: 0; }
+.pasos li::before {
+  counter-increment: paso;
+  content: "0" counter(paso);
+  display: block;
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  color: var(--brasa);
+  margin-bottom: 20px;
+  padding-top: 4px;
+}
+.pasos li::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--brasa);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .5s var(--salida);
+}
+.pasos li:hover::after { transform: scaleX(1); }
+
+.pasos h3 {
+  display: block;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: -.016em;
+  line-height: 1.35;
+  margin-bottom: 7px;
+}
+.pasos p {
+  font-size: .9rem;
+  line-height: 1.55;
+  color: var(--tinta-suave);
+  text-wrap: pretty;
+  max-width: 26ch;
+}
+
+/* ---------- banda de muestra ---------- */
+
+.muestra {
+  background: var(--noche);
+  color: #EFE8DC;
+  padding-block: clamp(56px, 7vw, 96px);
+  position: relative;
+  overflow: hidden;
+}
+.muestra::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .5;
+  background:
+    radial-gradient(900px 320px at 85% 0%, rgba(196,98,61,.16), transparent 70%),
+    radial-gradient(700px 300px at 0% 100%, rgba(246,242,233,.05), transparent 70%);
+}
+.muestra__rejilla {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+}
+/* .muestra p tiene la misma especificidad y va después: hace falta este peso */
+.muestra p.muestra__rotulo {
+  font-family: var(--mono);
+  font-size: .665rem;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--brasa-clara);
+  margin-bottom: 16px;
+}
+.muestra h2 {
+  font-family: var(--display);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -.032em;
+  text-wrap: balance;
+  max-width: 26ch;
+  margin-bottom: 14px;
+}
+.muestra p {
+  color: #B9AE9C;
+  max-width: 48ch;
+  font-size: .98rem;
+  text-wrap: pretty;
+}
+
+/* ---------- precios ---------- */
+
+.precios {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  align-items: stretch;
+  margin-top: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 3px;
+  background: var(--papel-alto);
+  overflow: hidden;
+}
+
+.plan {
+  padding: clamp(24px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-right: 1px solid var(--linea);
+  transition: background-color .3s linear;
+}
+.plan:last-child { border-right: 0; }
+.plan:hover { background: #FFFDF8; }
+
+.plan--destacado {
+  background: var(--noche);
+  color: #F4EDE1;
+  border-right-color: transparent;
+  position: relative;
+}
+.plan--destacado:hover { background: #1C1812; }
+
+.plan__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 22px;
+}
+.plan__nombre {
+  font-family: var(--mono);
+  font-size: .685rem;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+}
+.plan--destacado .plan__nombre { color: #C4623D; }
+
+.plan__insignia {
+  font-family: var(--mono);
+  font-size: .6rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  background: var(--brasa);
+  color: #FDF9F2;
+  padding: 4px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.plan__monto {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--display);
+  font-size: clamp(2.1rem, 3.4vw, 2.85rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -.045em;
+  font-variant-numeric: tabular-nums;
+}
+.plan__monto .uf {
+  font-size: .42em;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: var(--tinta-suave);
+  transform: translateY(-.14em);
+}
+.plan--destacado .plan__monto .uf { color: #A99E8C; }
+
+.plan__pesos {
+  font-family: var(--mono);
+  font-size: .79rem;
+  letter-spacing: .01em;
+  color: var(--tinta-tenue);
+  margin-top: -6px;
+}
+.plan--destacado .plan__pesos { color: #A99E8C; }
+
+.plan ul {
+  list-style: none;
+  display: grid;
+  gap: 9px;
+  font-size: .9rem;
+  line-height: 1.5;
+  color: var(--tinta-suave);
+  padding-top: 18px;
+  border-top: 1px solid var(--linea);
+  margin-top: auto;
+}
+.plan--destacado ul { border-top-color: rgba(244,237,225,.14); color: #C6BBA8; }
+
+.plan li {
+  display: grid;
+  grid-template-columns: 13px minmax(0, 1fr);
+  gap: 10px;
+}
+.plan li::before {
+  content: "";
+  width: 5px; height: 5px;
+  border: 1px solid var(--brasa);
+  border-radius: 50%;
+  margin-top: 8px;
+}
+.plan--destacado li::before { border-color: var(--brasa-clara); }
+
+.plan__accion { margin-top: 4px; }
+.plan__accion .boton { width: 100%; justify-content: center; padding: 13px 18px; font-size: .875rem; }
+
+.aviso {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 26px;
+  padding: 18px 20px;
+  border: 1px solid var(--linea);
+  border-left: 2px solid var(--brasa);
+  background: var(--papel-alto);
+  font-size: .885rem;
+  line-height: 1.6;
+  color: var(--tinta-suave);
+  border-radius: 0 2px 2px 0;
+}
+.aviso svg { margin-top: 2px; color: var(--brasa); flex: none; }
+.aviso b { color: var(--tinta); font-weight: 600; }
+
+/* ---------- cierre ---------- */
+
+.cierre {
+  padding-block: clamp(64px, 9vw, 128px);
+  border-top: 1px solid var(--linea);
+  text-align: center;
+}
+.cierre h2 {
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 3.6vw, 2.9rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -.034em;
+  text-wrap: balance;
+  max-width: 22ch;
+  margin: 0 auto 18px;
+}
+.cierre h2 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--brasa);
+  font-size: 1.05em;
+  letter-spacing: -.015em;
+}
+.cierre p {
+  color: var(--tinta-suave);
+  max-width: 52ch;
+  margin: 0 auto 32px;
+  text-wrap: pretty;
+}
+.cierre__acciones {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* el selector necesita más peso que .cierre p */
+.cierre p.cierre__correo {
+  margin: 24px auto 0;
+  max-width: 48ch;
+  font-size: .885rem;
+  color: var(--tinta-tenue);
+}
+.cierre__correo a {
+  color: var(--tinta);
+  text-decoration: none;
+  border-bottom: 1px solid var(--linea-control);
+  padding-bottom: 1px;
+  transition: color .2s linear, border-color .2s linear;
+}
+.cierre__correo a:hover { color: var(--brasa); border-color: var(--brasa); }
+
+/* ---------- pie ---------- */
+
+.pie {
+  border-top: 1px solid var(--linea);
+  padding-block: 34px;
+  font-size: .84rem;
+  color: var(--tinta-tenue);
+}
+.pie__rejilla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px 24px;
+  flex-wrap: wrap;
+}
+.pie__marca { display: flex; align-items: center; gap: 10px; color: var(--tinta-suave); }
+.pie a { text-decoration: none; border-bottom: 1px solid var(--linea-fuerte); padding-bottom: 1px; transition: border-color .2s linear, color .2s linear; }
+.pie a:hover { color: var(--brasa); border-color: var(--brasa); }
+.pie__meta { font-family: var(--mono); font-size: .715rem; letter-spacing: .03em; }
+
+/* ---------- revelado ---------- */
+
+/* Mejora progresiva: sin JS (o si el observer no corre) el contenido se ve.
+   El estado oculto lo instala el propio script con .js-motion en <html>. */
+.js-motion .revelar {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .7s var(--salida), transform .7s var(--salida);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.js-motion .revelar.es-visible { opacity: 1; transform: none; }
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1080px) {
+  .portada__rejilla { grid-template-columns: 1fr; gap: 44px; }
+  .portada { text-align: left; }
+  .especimen { transform: none; max-width: 420px; }
+  .capitulo__rejilla { grid-template-columns: 1fr; gap: 20px; }
+  .riel { position: static; flex-direction: row; align-items: baseline; gap: 12px; }
+  .riel__num { font-size: 1.6rem; }
+  .riel__num::after { display: none; }
+  .pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pasos li:nth-child(2) { border-right: 0; }
+  .pasos li:nth-child(1), .pasos li:nth-child(2) { border-bottom: 1px solid var(--linea); }
+  .muestra__rejilla { grid-template-columns: 1fr; }
+  .franja__rejilla { grid-template-columns: repeat(2, 1fr); }
+  .franja__item:nth-child(3) { border-left: 0; }
+  .franja__item:nth-child(3), .franja__item:nth-child(4) { border-top: 1px solid var(--linea); }
+  .franja__item:nth-child(2n) { padding-left: 22px; }
+  .franja__item:nth-child(2n+1) { padding-left: 0; }
+}
+
+@media (max-width: 900px) {
+  .menu { display: none; }
+  .marca__lema { display: none; }
+  .precios { grid-template-columns: 1fr; }
+  .plan { border-right: 0; border-bottom: 1px solid var(--linea); }
+  .plan:last-child { border-bottom: 0; }
+}
+
+@media (max-width: 620px) {
+  :root { --seccion: 56px; }
+  .barra { height: 62px; gap: 12px; }
+  .barra__accion { margin-left: auto; }
+  .portada h1 { letter-spacing: -.030em; line-height: 1.06; }
+  .garantias { grid-template-columns: 1fr; }
+  .pasos { grid-template-columns: 1fr; }
+  .pasos li { border-right: 0; border-bottom: 1px solid var(--linea); padding-right: 0; }
+  .pasos li:last-child { border-bottom: 0; }
+  .franja__rejilla { grid-template-columns: 1fr; }
+  .franja__item + .franja__item { border-left: 0; border-top: 1px solid var(--linea); }
+  .franja__item,
+  .franja__item:nth-child(2n) { padding: 16px 0; }
+  .tirada { max-width: none; }
+  .acciones .boton { flex: 1 1 100%; justify-content: center; }
+  .bloqueo-movil { display: none; }
+  .aviso { grid-template-columns: 1fr; gap: 8px; }
+  .especimen { transform: none; }
+}
+
+/* ---------- impresión ----------
+   El comprador B2B imprime la página para llevarla al socio o al contador.
+   Sin fondo, la tarjeta destacada (texto claro sobre noche) desaparecería. */
+@media print {
+  @page { margin: 16mm; }
+  html { scroll-behavior: auto; }
   body {
-    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--tinta); background: var(--fondo);
-    line-height: 1.6; font-size: 16px;
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 10.5pt;
   }
-  .contenedor { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+  body::before { display: none; }
+  .cabecera, .cabecera.esta-pegada {
+    position: static !important;
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: 1px solid #999;
+  }
+  .progreso, .menu, .boton__flecha, .salto, .pantalla-solo { display: none !important; }
+  .cabecera .boton { display: none !important; }
 
-  header {
-    border-bottom: 1px solid var(--linea);
-    padding: 20px 0; margin-bottom: 0;
-  }
-  header .contenedor { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .marca { font-weight: 700; letter-spacing: .16em; font-size: 13px; text-transform: uppercase; }
-  .marca span { color: var(--acento); }
-  header .contacto { font-size: 13.5px; color: var(--tenue); }
+  /* el revelado no debe ocultar nada en papel */
+  .js-motion .revelar, .revelar { opacity: 1 !important; transform: none !important; }
 
-  .hero { padding: 72px 0 56px; }
-  .hero h1 {
-    font-size: clamp(28px, 4.4vw, 42px); line-height: 1.18;
-    letter-spacing: -.015em; margin-bottom: 20px; font-weight: 700;
-  }
-  .hero h1 em { color: var(--acento); font-style: normal; }
-  .hero .entrada {
-    font-size: clamp(17px, 2.2vw, 20px); color: var(--tenue);
-    max-width: 62ch; margin-bottom: 32px;
-  }
-  .acciones { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
-  .boton {
-    display: inline-block; background: var(--acento); color: #fff;
-    padding: 13px 26px; border-radius: 5px; text-decoration: none;
-    font-weight: 600; font-size: 15px; transition: opacity .2s;
-  }
-  .boton:hover { opacity: .88; }
-  .boton.secundario { background: transparent; color: var(--acento); border: 1px solid var(--acento); }
+  .muestra { background: #fff !important; color: #000 !important; }
+  .muestra::after { display: none; }
+  .muestra p, .muestra__rotulo { color: #333 !important; }
 
-  section { padding: 56px 0; border-top: 1px solid var(--linea); }
-  section h2 {
-    font-size: clamp(21px, 3vw, 27px); margin-bottom: 28px;
-    letter-spacing: -.01em; line-height: 1.28;
+  /* la tarjeta oscura se invierte: borde negro, texto negro */
+  .plan--destacado {
+    background: #fff !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
   }
-  section h2 .num {
-    display: block; font-size: 12px; letter-spacing: .2em; color: var(--acento);
-    font-weight: 600; margin-bottom: 10px;
-  }
+  .plan--destacado .plan__nombre,
+  .plan--destacado .plan__pesos,
+  .plan--destacado ul,
+  .plan--destacado .plan__monto .uf { color: #333 !important; }
+  .plan--destacado ul { border-top-color: #999 !important; }
+  .plan--destacado .plan__insignia { background: #fff !important; color: #000 !important; border: 1px solid #000; }
 
-  .problema p { font-size: 17px; color: var(--tenue); max-width: 68ch; }
-  .problema p + p { margin-top: 16px; }
-  .problema strong { color: var(--tinta); }
+  /* el espécimen conserva su jerarquía sin sombras ni rotación */
+  .especimen { transform: none !important; box-shadow: none !important; border: 1px solid #999 !important; }
+  .especimen__vacio { background: #f2f2f2 !important; border-left: 2px solid #000; }
 
-  .lista-verdad { list-style: none; display: grid; gap: 18px; }
-  .lista-verdad li {
-    display: grid; grid-template-columns: 26px 1fr; gap: 14px;
-    align-items: start; font-size: 16px;
-  }
-  .lista-verdad .marca-si { color: #1a7f4b; font-weight: 700; font-size: 18px; }
-  .lista-verdad .marca-no { color: #b3261e; font-weight: 700; font-size: 18px; }
-  .lista-verdad b { display: block; margin-bottom: 2px; }
-  .lista-verdad span { color: var(--tenue); font-size: 15px; }
+  .aviso { border: 1px solid #999; background: #fafafa; }
+  .garantias, .pasos, .precios, .plan { border-color: #999 !important; }
+  .garantias li { background: #fff !important; }
+  .pasos li { break-inside: avoid; }
+  .capitulo { padding-block: 26px; break-inside: avoid; }
+  .capitulo__rejilla { grid-template-columns: 90px 1fr; }
+  .riel { position: static; }
 
-  .ejemplo {
-    background: var(--suave); border: 1px solid var(--linea);
-    border-radius: 6px; padding: 22px 24px; margin-top: 8px;
-    font-size: 15px; color: var(--tenue);
+  a { color: #000; text-decoration: underline; }
+  /* la URL de los enlaces externos, visible en papel */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: "JetBrains Mono", monospace;
+    font-size: 7.5pt;
+    word-break: break-all;
   }
-  .ejemplo .cita { font-style: italic; color: var(--tinta); }
-  .ejemplo .fuente {
-    display: block; margin-top: 10px; font-size: 13px;
-    color: var(--acento); font-family: "SF Mono", Consolas, monospace;
-  }
+  /* un mailto con asunto y cuerpo codificado ocupa media página y es ilegible
+     en papel: se imprime sólo la dirección, que ya está visible en el texto */
+  a[href^="mailto"]::after { content: none; }
+  a[href^="mailto"] { text-decoration: none; }
+  .boton { box-shadow: none !important; border: 1px solid #000 !important; background: #fff !important; color: #000 !important; }
+  .plan__accion { display: none; }
+  .pie { border-top: 1px solid #999; }
+}
 
-  .precios { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
-  .plan {
-    border: 1px solid var(--linea); border-radius: 6px; padding: 24px 22px;
-    display: flex; flex-direction: column; gap: 12px;
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
   }
-  .plan.destacado { border-color: var(--acento); box-shadow: 0 0 0 1px var(--acento); }
-  .plan .nombre { font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .08em; }
-  .plan .monto { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
-  .plan .monto small { font-size: 13px; font-weight: 500; color: var(--tenue); display: block; letter-spacing: 0; }
-  .plan ul { list-style: none; font-size: 14px; color: var(--tenue); display: grid; gap: 7px; }
-  .plan li::before { content: "— "; color: var(--acento); }
-
-  .aviso {
-    border-left: 3px solid var(--acento); padding: 16px 20px;
-    background: var(--suave); font-size: 15px; color: var(--tenue); margin-top: 24px;
-  }
-  .aviso b { color: var(--tinta); }
-
-  .cierre { text-align: center; padding: 72px 0; border-top: 1px solid var(--linea); }
-  .cierre h2 { margin-bottom: 16px; }
-  .cierre p { color: var(--tenue); max-width: 56ch; margin: 0 auto 28px; font-size: 16px; }
-
-  footer {
-    border-top: 1px solid var(--linea); padding: 28px 0;
-    font-size: 13px; color: var(--tenue);
-    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-  }
+  .js-motion .revelar { opacity: 1; transform: none; }
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="contenedor">
-    <div class="marca">Roku<span>sho</span></div>
-    <div class="contacto">Christian Díaz · Villa Alemana, Chile</div>
+<a class="salto" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera" id="cabecera">
+  <div class="envoltura barra">
+    <a class="marca" href="#inicio" aria-label="Rokusho, ir al inicio">
+      Rokusho<span class="marca__punto" aria-hidden="true"></span>
+      <span class="marca__lema bloqueo-movil">Informes verificables</span>
+    </a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#problema">El problema</a>
+      <a href="#cambia">Qué cambia</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#precios">Precios</a>
+    </nav>
+    <a class="boton boton--mini barra__accion" href="mailto:christiandiazpin@gmail.com?subject=Piloto%20Rokusho&body=Hola%20Christian%3A%0A%0ANombre%3A%20%0AEmpresa%3A%20%0AQu%C3%A9%20documento%20necesito%20revisar%3A%20%0APara%20cu%C3%A1ndo%3A%20%0A">
+      Hablar del piloto
+    </a>
   </div>
+  <div class="progreso" id="progreso" aria-hidden="true"></div>
 </header>
 
-<div class="hero">
-  <div class="contenedor">
-    <h1>Informes que puedes <em>verificar</em>, no que tienes que creer.</h1>
-    <p class="entrada">
-      Cada dato de tu documento lleva la cita de dónde salió. Las cifras están
-      calculadas, no estimadas. Y cuando algo no está en el material, el informe
-      dice «no está» en lugar de rellenarlo.
-    </p>
-    <div class="acciones">
-      <a class="boton" href="#precios">Ver precios</a>
-      <a class="boton secundario" href="#como">Cómo funciona</a>
+<main id="contenido">
+
+  <!-- ============ PORTADA ============ -->
+  <section class="portada" id="inicio" aria-labelledby="t-inicio">
+    <div class="envoltura portada__rejilla">
+      <div class="portada__texto">
+        <p class="sobretitulo">Christian Díaz · Villa Alemana, Chile</p>
+        <h1 id="t-inicio">Informes que puedes <em>verificar</em>, no que tienes que creer.</h1>
+        <p class="entradilla">
+          Cada dato de tu documento lleva <strong>la cita de dónde salió</strong>. Las cifras
+          están calculadas, no estimadas. Y cuando algo no está en el material, el informe
+          dice «no está» en lugar de rellenarlo.
+        </p>
+        <div class="acciones">
+          <a class="boton" href="#precios">
+            Ver precios <span class="boton__flecha" aria-hidden="true">→</span>
+          </a>
+          <a class="boton boton--fantasma" href="#como">Cómo funciona</a>
+        </div>
+        <p class="letra-chica">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1.6 13.6 4v4.1c0 3.2-2.3 5.6-5.6 6.3-3.3-.7-5.6-3.1-5.6-6.3V4L8 1.6Z" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M5.9 8.1 7.4 9.6l3-3.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Trabajo unipersonal: hablas con quien produce el informe.
+        </p>
+      </div>
+
+      <figure class="especimen revelar" style="--i:1">
+        <div class="especimen__barra">
+          <span class="punto" aria-hidden="true"></span>
+          <span class="especimen__archivo">contrato-ejemplo.txt</span>
+          <span class="especimen__linea">línea 7 / 13</span>
+        </div>
+        <blockquote>
+          «TERCERO: La renta mensual es de 1.200.000 pesos, pagadera los
+          primeros 5 días de cada mes.»
+        </blockquote>
+        <figcaption>
+          <span class="etiqueta etiqueta--ok">Verificado</span>
+          <span>Cita literal, con su línea de origen.
+            <a class="especimen__enlace" href="muestra/contrato-ejemplo.txt" target="_blank" rel="noopener">Ver el archivo citado</a>
+          </span>
+        </figcaption>
+        <div class="especimen__vacio">
+          <span class="etiqueta etiqueta--vacio">Vacío</span>
+          El contrato no dice si esa renta es neta o incluye IVA.
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ FRANJA ============ -->
+  <div class="franja">
+    <div class="envoltura franja__rejilla">
+      <dl class="franja__item">
+        <dt>Cada dato</dt>
+        <dd>Con cita y línea de origen</dd>
+      </dl>
+      <dl class="franja__item">
+        <dt>Cada cifra</dt>
+        <dd>Calculada, no estimada</dd>
+      </dl>
+      <dl class="franja__item">
+        <dt>Lo que falta</dt>
+        <dd>Se declara como ausencia</dd>
+      </dl>
+      <dl class="franja__item">
+        <dt>Plazo piloto</dt>
+        <dd>5 días hábiles</dd>
+      </dl>
     </div>
   </div>
-</div>
 
-<section class="problema">
-  <div class="contenedor">
-    <h2><span class="num">01 — EL PROBLEMA</span>El trabajo que nadie alcanza a hacer</h2>
-    <p>
-      Los contratos se firman sin que nadie los lea en detalle. Las cifras se
-      copian a mano de una planilla a otra. Los informes se escriben la noche
-      antes porque no hubo otro momento.
-    </p>
-    <p>
-      No es falta de interés: es falta de horas. <strong>El trabajo pendiente no
-      es el trabajo que ya haces; es el que se quedó sin hacer.</strong>
-    </p>
-  </div>
-</section>
-
-<section>
-  <div class="contenedor">
-    <h2><span class="num">02 — LO QUE CAMBIA</span>Un documento en el que puedes confiar</h2>
-    <ul class="lista-verdad">
-      <li>
-        <span class="marca-si">✓</span>
-        <div>
-          <b>Cada dato tiene su fuente</b>
-          <span>El informe cita el documento y la línea de donde salió. Puedes ir a mirarlo.</span>
+  <!-- ============ 01 PROBLEMA ============ -->
+  <section class="capitulo" id="problema" aria-labelledby="t-problema">
+    <div class="envoltura capitulo__rejilla">
+      <div class="riel revelar">
+        <span class="riel__num">01</span>
+        <span class="riel__rotulo">El problema</span>
+      </div>
+      <div>
+        <h2 id="t-problema">El trabajo que nadie alcanza a hacer</h2>
+        <div class="prosa revelar" style="--i:1">
+          <p>
+            Los contratos se firman sin que nadie los lea en detalle. Las cifras se copian
+            a mano de una planilla a otra. Los informes se escriben la noche antes porque
+            no hubo otro momento.
+          </p>
+          <p>
+            No es falta de interés: es falta de horas. <strong>El trabajo pendiente no es el
+            trabajo que ya haces; es el que se quedó sin hacer.</strong>
+          </p>
         </div>
-      </li>
-      <li>
-        <span class="marca-si">✓</span>
-        <div>
-          <b>Las cuentas están hechas, no supuestas</b>
-          <span>Los montos se calculan con precisión decimal. No hay «más o menos».</span>
-        </div>
-      </li>
-      <li>
-        <span class="marca-si">✓</span>
-        <div>
-          <b>Lo que falta se dice</b>
-          <span>Si el contrato no menciona el IVA, el informe lo señala como ausencia. No lo inventa.</span>
-        </div>
-      </li>
-      <li>
-        <span class="marca-no">✕</span>
-        <div>
-          <b>No es asesoría legal</b>
-          <span>Es el insumo para que tú decidas. El criterio profesional sigue siendo tuyo.</span>
-        </div>
-      </li>
-    </ul>
-
-    <div class="ejemplo">
-      Así se ve un dato dentro del informe:
-      <p style="margin-top:12px" class="cita">
-        «TERCERO: El monto mensual es de 850.000 pesos, pagaderos a 30 días.»
-      </p>
-      <span class="fuente">contrato.txt · línea 7 · dato verificado</span>
-      <p style="margin-top:14px">
-        Y lo que no aparece, se nombra así:
-        <span class="cita">«El contrato no indica moneda ni si el monto incluye IVA.»</span>
-        <span class="fuente">vacío documentado, no rellenado</span>
-      </p>
+        <blockquote class="tirada revelar" style="--i:2">
+          <span>La pregunta</span>
+          ¿Cuántas decisiones se tomaron el mes pasado con un dato que nadie pudo verificar?
+        </blockquote>
+      </div>
     </div>
+  </section>
 
-    <p style="margin-top:22px">
-      <a class="boton secundario" href="muestra/ejemplo-informe.html" target="_blank" rel="noopener">
-        Ver un informe completo de ejemplo
+  <!-- ============ 02 LO QUE CAMBIA ============ -->
+  <section class="capitulo" id="cambia" aria-labelledby="t-cambia">
+    <div class="envoltura capitulo__rejilla">
+      <div class="riel revelar">
+        <span class="riel__num">02</span>
+        <span class="riel__rotulo">Lo que cambia</span>
+      </div>
+      <div>
+        <h2 id="t-cambia">Un documento en el que puedes confiar</h2>
+        <ul class="garantias revelar" style="--i:1">
+          <li>
+            <span class="marca-si" aria-hidden="true">✓</span>
+            <div>
+              <h3>Cada dato tiene su fuente</h3>
+              <p>El informe cita el documento y la línea de donde salió. Puedes ir a mirarlo.</p>
+            </div>
+          </li>
+          <li>
+            <span class="marca-si" aria-hidden="true">✓</span>
+            <div>
+              <h3>Las cuentas están hechas, no supuestas</h3>
+              <p>Los montos se calculan con precisión decimal. No hay «más o menos».</p>
+            </div>
+          </li>
+          <li>
+            <span class="marca-si" aria-hidden="true">✓</span>
+            <div>
+              <h3>Lo que falta se dice</h3>
+              <p>Si el contrato no menciona el IVA, el informe lo señala como ausencia. No lo inventa.</p>
+            </div>
+          </li>
+          <li>
+            <span class="marca-no" aria-hidden="true">✕</span>
+            <div>
+              <h3>No es asesoría legal</h3>
+              <p>Es el insumo para que tú decidas. El criterio profesional sigue siendo tuyo.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BANDA DE MUESTRA ============ -->
+  <section class="muestra" aria-labelledby="muestra-titulo">
+    <div class="envoltura muestra__rejilla">
+      <div class="revelar">
+        <p class="muestra__rotulo">Prueba, no promesa</p>
+        <h2 id="muestra-titulo">El informe completo está a la vista.</h2>
+        <p>
+          No hay capturas de pantalla ni casos de éxito inventados: el documento de muestra es
+          el mismo que se entrega. Ábrelo y revisa cómo se citan las fuentes, cómo se declaran
+          las ausencias y cómo se calculan las fechas.
+        </p>
+      </div>
+      <a class="boton boton--claro revelar" style="--i:1" href="muestra/ejemplo-informe.html" target="_blank" rel="noopener">
+        Ver un informe completo
+        <span class="boton__flecha" aria-hidden="true">↗</span>
       </a>
-      <small style="display:block;margin-top:10px;color:#5b6472">
-        Documento real generado por Rokusho. Los datos del contrato son ficticios.
-      </small>
-    </p>
-  </div>
-</section>
+    </div>
+  </section>
 
-<section id="como">
-  <div class="contenedor">
-    <h2><span class="num">03 — CÓMO FUNCIONA</span>Cuatro pasos, sin sorpresas</h2>
-    <ul class="lista-verdad">
-      <li><span class="marca-si">1</span><div><b>Me pasas el material</b><span>Contratos, actas, planillas, lo que ya tienes.</span></div></li>
-      <li><span class="marca-si">2</span><div><b>Lo leo y te digo qué falta</b><span>Si el material no alcanza para el informe, se dice antes de empezar.</span></div></li>
-      <li><span class="marca-si">3</span><div><b>Produzco el entregable</b><span>5 días hábiles para el piloto, 7 para un encargo.</span></div></li>
-      <li><span class="marca-si">4</span><div><b>Lo revisas</b><span>Una ronda de correcciones incluida. Si no sirve, lo dices y no hay contrato.</span></div></li>
-    </ul>
-  </div>
-</section>
-
-<section id="precios">
-  <div class="contenedor">
-    <h2><span class="num">04 — PRECIOS</span>Se cobra por entregable</h2>
-    <div class="precios">
-      <div class="plan">
-        <div class="nombre">Piloto</div>
-        <div class="monto">8 UF <small>≈ $330.000</small></div>
-        <ul>
-          <li>Un informe de 5 a 15 páginas</li>
-          <li>Citas verificables</li>
-          <li>5 días hábiles</li>
-          <li>Una corrección incluida</li>
-        </ul>
+  <!-- ============ 03 CÓMO FUNCIONA ============ -->
+  <section class="capitulo" id="como" aria-labelledby="t-como">
+    <div class="envoltura capitulo__rejilla">
+      <div class="riel revelar">
+        <span class="riel__num">03</span>
+        <span class="riel__rotulo">Cómo funciona</span>
       </div>
-      <div class="plan destacado">
-        <div class="nombre">Encargo</div>
-        <div class="monto">18 UF <small>≈ $743.000 por entregable</small></div>
-        <ul>
-          <li>Varios documentos de un mismo corpus</li>
-          <li>Cálculo y verificación de cifras</li>
-          <li>7 días hábiles</li>
-          <li>Dos correcciones incluidas</li>
-        </ul>
-      </div>
-      <div class="plan">
-        <div class="nombre">Mensual</div>
-        <div class="monto">45 UF <small>≈ $1.857.000 al mes</small></div>
-        <ul>
-          <li>Hasta 4 entregables al mes</li>
-          <li>Memoria del negocio</li>
-          <li>Respuesta en 48 horas</li>
-          <li>Revisión mensual</li>
-        </ul>
+      <div>
+        <h2 id="t-como">Cuatro pasos, sin sorpresas</h2>
+        <ol class="pasos">
+          <li class="revelar" style="--i:0">
+            <h3>Me pasas el material</h3>
+            <p>Contratos, actas, planillas, lo que ya tienes.</p>
+          </li>
+          <li class="revelar" style="--i:1">
+            <h3>Lo leo y te digo qué falta</h3>
+            <p>Si el material no alcanza para el informe, se dice antes de empezar.</p>
+          </li>
+          <li class="revelar" style="--i:2">
+            <h3>Produzco el entregable</h3>
+            <p>5 días hábiles para el piloto, 7 para un encargo.</p>
+          </li>
+          <li class="revelar" style="--i:3">
+            <h3>Lo revisas</h3>
+            <p>Una ronda de correcciones incluida (dos en el encargo). Si no sirve, lo dices y no hay contrato.</p>
+          </li>
+        </ol>
       </div>
     </div>
-    <div class="aviso">
-      <b>Los valores en pesos son referenciales</b> y están calculados con la UF del
-      5 de noviembre de 2026 ($41.274,20). El precio que vale es el de la UF al
-      momento de cotizar. Los precios son una propuesta inicial: todavía
-      no hay ventas cerradas, así que puedo ajustarlos según tu caso.
+  </section>
+
+  <!-- ============ 04 PRECIOS ============ -->
+  <section class="capitulo" id="precios" aria-labelledby="t-precios">
+    <div class="envoltura capitulo__rejilla">
+      <div class="riel revelar">
+        <span class="riel__num">04</span>
+        <span class="riel__rotulo">Precios</span>
+      </div>
+      <div>
+        <h2 id="t-precios">Se cobra por entregable</h2>
+
+        <div class="precios revelar" style="--i:1">
+          <article class="plan">
+            <div class="plan__cabecera">
+              <h3 class="plan__nombre">Piloto</h3>
+            </div>
+            <p class="plan__monto">8 <span class="uf">UF</span></p>
+            <p class="plan__pesos">≈ $330.000</p>
+            <ul>
+              <li>Un informe de 5 a 15 páginas</li>
+              <li>Citas verificables</li>
+              <li>5 días hábiles</li>
+              <li>Una corrección incluida</li>
+            </ul>
+            <div class="plan__accion">
+              <a class="boton boton--fantasma" href="mailto:christiandiazpin@gmail.com?subject=Piloto%20Rokusho%20-%208%20UF&body=Hola%20Christian%3A%0A%0ANombre%3A%20%0AEmpresa%3A%20%0AQu%C3%A9%20documento%20necesito%20revisar%3A%20%0APara%20cu%C3%A1ndo%3A%20%0A">Empezar por el piloto</a>
+            </div>
+          </article>
+
+          <article class="plan plan--destacado">
+            <div class="plan__cabecera">
+              <h3 class="plan__nombre">Encargo</h3>
+            </div>
+            <p class="plan__monto">18 <span class="uf">UF</span></p>
+            <p class="plan__pesos">≈ $743.000 por entregable</p>
+            <ul>
+              <li>Varios documentos de un mismo corpus</li>
+              <li>Cálculo y verificación de cifras</li>
+              <li>7 días hábiles</li>
+              <li>Dos correcciones incluidas</li>
+            </ul>
+            <div class="plan__accion">
+              <a class="boton" href="mailto:christiandiazpin@gmail.com?subject=Encargo%20Rokusho%20-%2018%20UF&body=Hola%20Christian%3A%0A%0ANombre%3A%20%0AEmpresa%3A%20%0AQu%C3%A9%20documento%20necesito%20revisar%3A%20%0APara%20cu%C3%A1ndo%3A%20%0A">Cotizar un encargo</a>
+            </div>
+          </article>
+
+          <article class="plan">
+            <div class="plan__cabecera">
+              <h3 class="plan__nombre">Mensual</h3>
+            </div>
+            <p class="plan__monto">45 <span class="uf">UF</span></p>
+            <p class="plan__pesos">≈ $1.857.000 al mes</p>
+            <ul>
+              <li>Hasta 4 entregables al mes</li>
+              <li>Memoria del negocio</li>
+              <li>Respuesta en 48 horas</li>
+              <li>Revisión mensual</li>
+            </ul>
+            <div class="plan__accion">
+              <a class="boton boton--fantasma" href="mailto:christiandiazpin@gmail.com?subject=Plan%20mensual%20Rokusho%20-%2045%20UF&body=Hola%20Christian%3A%0A%0ANombre%3A%20%0AEmpresa%3A%20%0AQu%C3%A9%20documento%20necesito%20revisar%3A%20%0APara%20cu%C3%A1ndo%3A%20%0A">Conversar el mensual</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="aviso revelar" style="--i:2">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.6" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M8 7.2v4.1M8 4.9v.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <p>
+            <b>Los valores en pesos son referenciales</b> y están calculados con la UF del
+            5 de noviembre de 2026 ($41.274,20). El precio que vale es el de la UF al momento
+            de cotizar. Los precios son una propuesta inicial: todavía no hay ventas cerradas,
+            así que puedo ajustarlos según tu caso.
+          </p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div class="cierre">
-  <div class="contenedor">
-    <h2>El piloto se paga solo si el resultado sirve.</h2>
-    <p>
-      Se elige una tarea concreta, se produce, y se compara con lo que cuesta hoy
-      hacerla. Si no convence, no hay contrato.
-    </p>
-    <a class="boton" href="mailto:christiandiazpin@gmail.com?subject=Piloto%20Rokusho">Hablar del piloto</a>
-  </div>
-</div>
+  <!-- ============ CIERRE ============ -->
+  <section class="cierre" id="contacto" aria-labelledby="t-contacto">
+    <div class="envoltura">
+      <h2 id="t-contacto">Empieza por un piloto de 8 UF.</h2>
+      <p>
+        Se elige una tarea concreta y se acota por escrito. Produzco el entregable y lo
+        comparas con lo que cuesta hoy hacerlo a mano. Si no te convence, no hay
+        compromiso de seguir.
+      </p>
+      <div class="cierre__acciones">
+        <a class="boton" href="mailto:christiandiazpin@gmail.com?subject=Piloto%20Rokusho&body=Hola%20Christian%3A%0A%0ANombre%3A%20%0AEmpresa%3A%20%0AQu%C3%A9%20documento%20necesito%20revisar%3A%20%0APara%20cu%C3%A1ndo%3A%20%0A">
+          Escribir a Christian <span class="boton__flecha" aria-hidden="true">→</span>
+        </a>
+        <a class="boton boton--fantasma" href="muestra/ejemplo-informe.html" target="_blank" rel="noopener">
+          Ver el informe de muestra
+        </a>
+      </div>
+      <p class="cierre__correo">
+        Escribe directo a
+        <a href="mailto:christiandiazpin@gmail.com">christiandiazpin@gmail.com</a>
+        — te responde la misma persona que produce el informe.
+      </p>
+    </div>
+  </section>
+</main>
 
-<footer>
-  <div class="contenedor" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;width:100%">
-    <span>Rokusho · informes con fuente verificable</span>
-    <span>christiandiazpin@gmail.com</span>
+<footer class="pie">
+  <div class="envoltura pie__rejilla">
+    <span class="pie__marca">
+      Rokusho
+      <span class="pie__meta">informes con fuente verificable</span>
+    </span>
+    <span class="pie__meta">
+      <a href="mailto:christiandiazpin@gmail.com">christiandiazpin@gmail.com</a>
+    </span>
   </div>
 </footer>
 
+<script>
+(function () {
+  "use strict";
+
+  var reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* 1. revelado al entrar en pantalla */
+  var revelables = Array.prototype.slice.call(document.querySelectorAll(".revelar"));
+  if (reducido || !("IntersectionObserver" in window)) {
+    revelables.forEach(function (el) { el.classList.add("es-visible"); });
+  } else {
+    /* el estado oculto se instala sólo si el observador va a funcionar */
+    document.documentElement.classList.add("js-motion");
+    var observador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("es-visible");
+          observador.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    revelables.forEach(function (el) { observador.observe(el); });
+    /* red de seguridad: si algo falla, todo visible a los 3s */
+    window.setTimeout(function () {
+      revelables.forEach(function (el) { el.classList.add("es-visible"); });
+    }, 3000);
+  }
+
+  /* 2. cabecera pegada + barra de progreso, agrupado en rAF */
+  var cabecera = document.getElementById("cabecera");
+  var barra = document.getElementById("progreso");
+  var pedido = false;
+
+  function pintar() {
+    pedido = false;
+    var y = window.scrollY || document.documentElement.scrollTop;
+    var alto = document.documentElement.scrollHeight - window.innerHeight;
+    cabecera.classList.toggle("esta-pegada", y > 8);
+    if (barra) {
+      barra.style.transform = "scaleX(" + (alto > 0 ? Math.min(y / alto, 1) : 0) + ")";
+    }
+  }
+  function alDesplazar() {
+    if (!pedido) { pedido = true; window.requestAnimationFrame(pintar); }
+  }
+  window.addEventListener("scroll", alDesplazar, { passive: true });
+  window.addEventListener("resize", alDesplazar, { passive: true });
+  pintar();
+
+  /* 3. sección activa en el menú */
+  var enlaces = Array.prototype.slice.call(document.querySelectorAll(".menu a"));
+  var secciones = enlaces.map(function (a) {
+    return document.querySelector(a.getAttribute("href"));
+  }).filter(Boolean);
+
+  if (secciones.length && "IntersectionObserver" in window) {
+    var vigia = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        enlaces.forEach(function (a) {
+          var activo = a.getAttribute("href") === "#" + e.target.id;
+          if (activo) { a.setAttribute("aria-current", "true"); }
+          else { a.removeAttribute("aria-current"); }
+        });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    secciones.forEach(function (s) { vigia.observe(s); });
+  }
+})();
+</script>
 </body>
 </html>
