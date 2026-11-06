@@ -763,6 +763,114 @@ a { color: inherit; }
   text-wrap: pretty;
 }
 
+/* ---------- interfaz ---------- */
+.interfaz {
+  padding-block: clamp(56px, 7vw, 96px);
+  background: var(--papel-alto);
+  border-top: 1px solid var(--linea);
+  border-bottom: 1px solid var(--linea);
+}
+.interfaz p.interfaz__rotulo {
+  font-family: var(--mono);
+  font-size: .665rem;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--brasa);
+  margin-bottom: 16px;
+}
+.interfaz h2 {
+  font-family: var(--display);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -.032em;
+  text-wrap: balance;
+  max-width: 30ch;
+  margin-bottom: 14px;
+}
+.interfaz__intro {
+  color: var(--tinta-suave);
+  max-width: 62ch;
+  font-size: .98rem;
+  text-wrap: pretty;
+}
+
+/* Pestañas de selección */
+.interfaz__tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 28px 0 16px;
+}
+.interfaz__tab {
+  font-family: var(--texto);
+  font-size: .82rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--tinta-suave);
+  cursor: pointer;
+  transition: background .14s var(--ease-salida), color .14s, border-color .14s;
+}
+.interfaz__tab[aria-selected="true"] {
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--papel);
+}
+.interfaz__tab:focus-visible {
+  outline: 2px solid var(--brasa);
+  outline-offset: 2px;
+}
+
+/* Visor */
+.interfaz__visor {
+  border: 1px solid var(--linea-fuerte);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--noche);
+  box-shadow: 0 24px 60px -30px rgba(23,20,15,.5);
+}
+.interfaz__visor img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1600 / 1000;
+  object-fit: cover;
+  background: var(--papel);
+}
+/* Ocultas por defecto: sin JS se ve la primera y las demás quedan inaccesibles,
+   por eso la primera se marca como visible también en el HTML. */
+.interfaz__panel[hidden] { display: none; }
+
+.interfaz__pie {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  margin-top: 14px;
+  font-size: .84rem;
+  color: var(--tinta-tenue);
+  line-height: 1.6;
+}
+.interfaz__pie strong { color: var(--tinta-suave); font-weight: 600; }
+.interfaz__nota {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--linea);
+  font-size: .82rem;
+  color: var(--tinta-tenue);
+  line-height: 1.65;
+  max-width: 74ch;
+}
+.interfaz__nota b { color: var(--tinta-suave); font-weight: 600; }
+
+@media (max-width: 720px) {
+  .interfaz__tabs { gap: 6px; }
+  .interfaz__tab { font-size: .76rem; padding: 8px 12px; }
+  .interfaz__pie { flex-direction: column; gap: 4px; }
+}
+
 /* ---------- precios ---------- */
 
 .precios {
@@ -1071,6 +1179,27 @@ a { color: inherit; }
   .garantias, .pasos, .precios, .plan { border-color: #999 !important; }
   .garantias li { background: #fff !important; }
   .pasos li { break-inside: avoid; }
+
+  /* La sección de interfaz: en papel se ve la captura impresa, con borde
+     porque el fondo oscuro del visor no se imprime por defecto. */
+  .interfaz { background: #fff !important; border-color: #999 !important; padding-block: 8mm; }
+  .interfaz__rotulo { color: #000 !important; }
+  .interfaz__intro, .interfaz__pie, .interfaz__nota { color: #333 !important; }
+  .interfaz__nota { border-top-color: #999 !important; }
+  /* Las pestañas no existen en papel. Se imprime sólo la captura principal:
+     imprimir las cuatro convertiría la hoja de venta en nueve páginas. */
+  .interfaz__tabs { display: none !important; }
+  .interfaz__panel[hidden] { display: none !important; }
+  .interfaz__panel { break-inside: avoid; }
+  .interfaz__visor {
+    border: 1px solid #666 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .interfaz .envoltura, .interfaz { overflow: visible !important; }
+  .interfaz__visor img { border: 1px solid #ccc; }
   .capitulo { padding-block: 26px; break-inside: avoid; }
   .capitulo__rejilla { grid-template-columns: 90px 1fr; }
   .riel { position: static; }
@@ -1277,15 +1406,66 @@ a { color: inherit; }
         <p class="muestra__rotulo">Prueba, no promesa</p>
         <h2 id="muestra-titulo">El informe completo está a la vista.</h2>
         <p>
-          No hay capturas de pantalla ni casos de éxito inventados: el documento de muestra es
-          el mismo que se entrega. Ábrelo y revisa cómo se citan las fuentes, cómo se declaran
-          las ausencias y cómo se calculan las fechas.
+          No hay casos de éxito inventados ni testimonios de clientes que no existen. El documento
+          de muestra es el mismo que se entrega: ábrelo y revisa cómo se citan las fuentes, cómo se
+          declaran las ausencias y cómo se calculan las fechas.
         </p>
       </div>
       <a class="boton boton--claro revelar" style="--i:1" href="muestra/ejemplo-informe.html" target="_blank" rel="noopener">
         Ver un informe completo
         <span class="boton__flecha" aria-hidden="true">↗</span>
       </a>
+    </div>
+  </section>
+
+  <!-- ============ 02b INTERFAZ ============ -->
+  <section class="interfaz" id="interfaz" aria-labelledby="t-interfaz">
+    <div class="envoltura">
+      <p class="interfaz__rotulo revelar">Así trabaja</p>
+      <h2 id="t-interfaz" class="revelar" style="--i:1">Lo que se ve mientras se produce el informe.</h2>
+      <p class="interfaz__intro revelar" style="--i:2">
+        Cada dato que aparece en un informe se rastrea hasta la línea del documento del que salió.
+        Mientras el sistema trabaja, deja constancia de qué leyó, qué calculó y qué no encontró.
+        Estas son cuatro pantallas reales de una corrida sobre el contrato de muestra.
+      </p>
+
+      <div class="interfaz__tabs revelar" style="--i:3" role="tablist" aria-label="Pantallas de la interfaz">
+        <button class="interfaz__tab" role="tab" id="tab-01" aria-controls="panel-01" aria-selected="true">El informe y su evidencia</button>
+        <button class="interfaz__tab" role="tab" id="tab-02" aria-controls="panel-02" aria-selected="false">Conciliación de planilla</button>
+        <button class="interfaz__tab" role="tab" id="tab-03" aria-controls="panel-03" aria-selected="false">El agente trabajando</button>
+        <button class="interfaz__tab" role="tab" id="tab-04" aria-controls="panel-04" aria-selected="false">Cierre y verificación</button>
+      </div>
+
+      <div class="interfaz__visor revelar" style="--i:4">
+        <div class="interfaz__panel" id="panel-01" role="tabpanel" aria-labelledby="tab-01" data-pie="El informe y su evidencia: cada cifra con la cita de la línea de la que sale.">
+          <img src="interfaz/01.jpg" width="1600" height="1000" loading="lazy" decoding="async"
+               alt="Pantalla del informe de un contrato de arriendo. La cifra de la renta aparece subrayada y, a su lado, un panel de evidencia muestra el archivo contrato.txt y el texto literal de la línea 7 que la respalda.">
+        </div>
+        <div class="interfaz__panel" id="panel-02" role="tabpanel" aria-labelledby="tab-02" data-pie="Conciliación de planilla: las filas que no cuadran, con su diferencia." hidden>
+          <img src="interfaz/02.jpg" width="1600" height="1000" loading="lazy" decoding="async"
+               alt="Pantalla de conciliación de una planilla de ventas. Dos filas aparecen marcadas en rojo con su diferencia: la fila 4 no cuadra por 476.000 pesos y la fila 6 no tiene nombre de cliente.">
+        </div>
+        <div class="interfaz__panel" id="panel-03" role="tabpanel" aria-labelledby="tab-03" data-pie="El agente trabajando: el encargo y cada herramienta con su resultado." hidden>
+          <img src="interfaz/03.jpg" width="1600" height="1000" loading="lazy" decoding="async"
+               alt="Pantalla del proceso: el encargo escrito por el cliente arriba, y debajo los pasos ejecutados con su herramienta, sus argumentos y el resultado de cada una.">
+        </div>
+        <div class="interfaz__panel" id="panel-04" role="tabpanel" aria-labelledby="tab-04" data-pie="Cierre: datos verificados, supuestos declarados y vacíos." hidden>
+          <img src="interfaz/04.jpg" width="1600" height="1000" loading="lazy" decoding="async"
+               alt="Pantalla de cierre: veintitrés datos verificados, cinco supuestos declarados y siete vacíos, con el resultado de la auditoría en cero avisos.">
+        </div>
+      </div>
+
+      <p class="interfaz__pie revelar" style="--i:5">
+        <span id="pie-interfaz"><strong>El informe y su evidencia.</strong> Cada cifra lleva su cita;
+          al tocarla se abre el documento de origen en la línea exacta.</span>
+      </p>
+
+      <p class="interfaz__nota">
+        <b>Qué es esto y qué no.</b> Son capturas de la interfaz de trabajo del sistema, sobre un
+        contrato de ejemplo con partes y montos ficticios. Rokusho no se vende como software para
+        instalar: se vende el informe, y lo produce una sola persona asistida por este sistema.
+        No hay clientes ni testimonios en esta página porque todavía no existen.
+      </p>
     </div>
   </section>
 
@@ -1505,6 +1685,41 @@ a { color: inherit; }
     }, { rootMargin: "-45% 0px -50% 0px" });
     secciones.forEach(function (s) { vigia.observe(s); });
   }
+
+  /* 4. pestañas de la interfaz */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".interfaz__tab"));
+  var pie = document.getElementById("pie-interfaz");
+  var textos = {
+    "panel-01": "<strong>El informe y su evidencia.</strong> Cada cifra lleva su cita; al tocarla se abre el documento de origen en la línea exacta.",
+    "panel-02": "<strong>Conciliación de planilla.</strong> Cada monto se recalcula por separado. Los que no cuadran se señalan con la diferencia y la fila, sin suponer la causa.",
+    "panel-03": "<strong>El agente trabajando.</strong> El encargo, las herramientas que usa y lo que devuelve cada una. Nada se da por sabido sin haberlo consultado.",
+    "panel-04": "<strong>Cierre y verificación.</strong> Antes de entregar: cuántos datos se verificaron, cuántos son supuestos declarados y cuántos el documento no dice."
+  };
+
+  function activar(tab) {
+    tabs.forEach(function (t) {
+      var panel = document.getElementById(t.getAttribute("aria-controls"));
+      var activo = t === tab;
+      t.setAttribute("aria-selected", activo ? "true" : "false");
+      t.setAttribute("tabindex", activo ? "0" : "-1");
+      if (panel) { panel.hidden = !activo; }
+    });
+    var id = tab.getAttribute("aria-controls");
+    if (pie && textos[id]) { pie.innerHTML = textos[id]; }
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.setAttribute("tabindex", tab.getAttribute("aria-selected") === "true" ? "0" : "-1");
+    tab.addEventListener("click", function () { activar(tab); });
+    tab.addEventListener("keydown", function (e) {
+      var destino = null;
+      if (e.key === "ArrowRight") { destino = tabs[(i + 1) % tabs.length]; }
+      else if (e.key === "ArrowLeft") { destino = tabs[(i - 1 + tabs.length) % tabs.length]; }
+      else if (e.key === "Home") { destino = tabs[0]; }
+      else if (e.key === "End") { destino = tabs[tabs.length - 1]; }
+      if (destino) { e.preventDefault(); activar(destino); destino.focus(); }
+    });
+  });
 })();
 </script>
 </body>
