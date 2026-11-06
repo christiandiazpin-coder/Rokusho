@@ -6,6 +6,7 @@
 <title>Rokusho — informes y análisis con datos verificables</title>
 <meta name="description" content="Informes con cita de origen en cada dato, cifras calculadas y ausencias declaradas. Piloto desde 8 UF.">
 <meta name="theme-color" content="#F6F2E9">
+<meta name="color-scheme" content="light">
 <link rel="canonical" href="https://christiandiazpin-coder.github.io/Rokusho/">
 <link rel="sitemap" type="application/xml" href="sitemap.xml">
 <meta property="og:title" content="Informes que puedes verificar, no que tienes que creer">
@@ -34,6 +35,11 @@
    ============================================================ */
 
 :root {
+  /* La pagina es de fondo claro por diseno. Sin esto, el modo oscuro
+     forzado de Chrome/Edge (y el auto-dark de Android) invierten el papel
+     a marron y se pierde toda la jerarquia. */
+  color-scheme: only light;
+
   /* color */
   --papel:        #F6F2E9;
   --papel-alto:   #FCFAF5;
