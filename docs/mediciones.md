@@ -683,3 +683,59 @@ nada de fuera del espacio, omisión de archivos ocultos, y búsqueda sin carpeta
 ```
 247 passed
 ```
+
+## 23. Pruebas de las medallas base
+
+Las tres medallas universales (`documentos`, `agenda`, `comunicacion`) no tenían
+pruebas. Una medalla es **texto**, y el texto se diluye al editarlo: el valor de
+Rokusho depende de que esas reglas signifiquen algo, no de que el archivo exista.
+
+**36 pruebas.** Fijan las reglas que sostienen la promesa comercial:
+
+| Medalla | Lo que se fija |
+|---|---|
+| documentos | Cita obligatoria, separar dicho de deducido, declarar ausencias, no redondear, mostrar contradicciones, no decir «revisado completo» si no lo está |
+| agenda | Inicio/fin/responsable, revisar choques, respetar dependencias, decir cuando no cabe |
+| comunicacion | Asunto primero, marcar `[FALTA: dato]` en vez de inventar, no prometer sin autorización |
+
+Más tres pruebas de coherencia aplicadas a las tres: toda medalla base **prohíbe
+inventar**, tiene vocabulario propio, y su prompt lleva las reglas completas.
+
+### Defecto encontrado: dos medallas exigían aprobación y tres no
+
+Las pruebas de coherencia revelaron una inconsistencia real:
+
+- `marketing` y `produccion-audiovisual` exigían aprobación antes de entregar.
+- `documentos`, `agenda` y `comunicacion` **no la exigían**.
+
+Como el principio del proyecto es que nada sale sin revisión, tres de las seis
+medallas permitían entregar sin ese paso. Corregido añadiendo la regla a las
+tres, con la redacción propia de cada rubro (informe, plan, mensaje).
+
+### Un error propio, corregido
+
+Para insertar la regla se usó `t.index("]")` sobre el bloque de reglas. En
+`comunicacion` la primera `]` estaba **dentro** de una cadena (`[FALTA: dato]`), y
+la inserción partió el archivo en dos: el TOML quedó ilegible.
+
+Se detectó porque las pruebas dejaron de cargar la medalla. Corregido reparando
+la cadena y verificando el TOML con `tomllib` antes de seguir.
+
+Lección: para editar TOML no sirve buscar el corchete de cierre; hay que usar la
+estructura, o verificar el resultado parseándolo.
+
+### Otro test mal escrito
+
+`test_ninguna_medalla_permite_entregar_sin_aprobacion` buscaba la palabra
+«aprobación», pero la regla de `documentos` dice «revisión explícita» y «visto
+bueno». El código estaba bien; la prueba exigía una palabra concreta en vez de la
+intención. Corregida para aceptar las tres formas.
+
+Un test demasiado literal da falsos fallos, y eso también desgasta la confianza
+en la suite.
+
+## 24. Estado de las pruebas
+
+```
+283 passed
+```

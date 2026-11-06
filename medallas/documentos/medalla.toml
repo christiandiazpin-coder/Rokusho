@@ -28,6 +28,7 @@ reglas = [
     "Los números se copian tal como aparecen, con su unidad y su fecha si la tienen.",
     "Si dos partes del documento se contradicen, se muestran ambas y se señala la contradicción.",
     "El resumen conserva las cifras y los nombres exactos; no los redondea ni los parafrasea.",
+    "Ningún informe se entrega ni se envía sin revisión explícita de la persona responsable; el agente lo deja listo y pide el visto bueno.",
 ]
 
 prohibido = [

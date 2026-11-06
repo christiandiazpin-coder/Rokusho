@@ -29,6 +29,7 @@ reglas = [
     "Se dice la holgura real entre compromisos; si es negativa, se avisa como choque.",
     "Cuando hay más trabajo que tiempo disponible, se dice qué se cae. No se comprime todo para que quepa.",
     "Las fechas se entregan en formato explícito (día, mes, hora) y con la zona horaria si hay duda.",
+    "Ningún plan se publica ni se comunica a terceros sin aprobación de la persona responsable.",
 ]
 
 prohibido = [

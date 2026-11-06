@@ -27,6 +27,7 @@ reglas = [
     "Si hay malas noticias, van al principio, no al final.",
     "Los datos concretos (montos, fechas, nombres, plazos) se toman del material entregado; si falta uno, se deja marcado como [FALTA: dato] en vez de inventarlo.",
     "El largo se ajusta al canal: correo formal hasta 150 palabras, mensaje interno hasta 60, aviso hasta 30.",
+    "Ningún mensaje se envía sin aprobación explícita: el agente redacta y deja listo, no envía.",
 ]
 
 prohibido = [
