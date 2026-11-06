@@ -499,7 +499,6 @@ a { color: inherit; }
   padding-block: var(--seccion);
   border-top: 1px solid var(--linea);
 }
-.capitulo--primero { border-top: 0; }
 
 .capitulo__rejilla {
   display: grid;
@@ -807,18 +806,6 @@ a { color: inherit; }
 }
 .plan--destacado .plan__nombre { color: #C4623D; }
 
-.plan__insignia {
-  font-family: var(--mono);
-  font-size: .6rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  background: var(--brasa);
-  color: #FDF9F2;
-  padding: 4px 8px;
-  border-radius: 2px;
-  white-space: nowrap;
-}
-
 .plan__monto {
   display: flex;
   align-items: baseline;
@@ -1048,7 +1035,7 @@ a { color: inherit; }
     -webkit-backdrop-filter: none !important;
     border-bottom: 1px solid #999;
   }
-  .progreso, .menu, .boton__flecha, .salto, .pantalla-solo { display: none !important; }
+  .progreso, .menu, .boton__flecha, .salto { display: none !important; }
   .cabecera .boton { display: none !important; }
 
   /* el revelado no debe ocultar nada en papel */
@@ -1069,7 +1056,6 @@ a { color: inherit; }
   .plan--destacado ul,
   .plan--destacado .plan__monto .uf { color: #333 !important; }
   .plan--destacado ul { border-top-color: #999 !important; }
-  .plan--destacado .plan__insignia { background: #fff !important; color: #000 !important; border: 1px solid #000; }
 
   /* el espécimen conserva su jerarquía sin sombras ni rotación */
   .especimen { transform: none !important; box-shadow: none !important; border: 1px solid #999 !important; }
