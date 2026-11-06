@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rokusho — informes y análisis con datos verificables</title>
+<meta name="description" content="Informes con cita de origen en cada dato, cifras calculadas y ausencias declaradas. Piloto desde 8 UF.">
+<meta property="og:title" content="Informes que puedes verificar, no que tienes que creer">
+<meta property="og:description" content="Cada dato lleva la cita de dónde salió. Las cifras están calculadas, no estimadas.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --tinta: #14181f;
+    --tenue: #5b6472;
+    --linea: #e2e6ec;
+    --acento: #1f4e79;
+    --fondo: #ffffff;
+    --suave: #f6f8fa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--tinta); background: var(--fondo);
+    line-height: 1.6; font-size: 16px;
+  }
+  .contenedor { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    border-bottom: 1px solid var(--linea);
+    padding: 20px 0; margin-bottom: 0;
+  }
+  header .contenedor { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .marca { font-weight: 700; letter-spacing: .16em; font-size: 13px; text-transform: uppercase; }
+  .marca span { color: var(--acento); }
+  header .contacto { font-size: 13.5px; color: var(--tenue); }
+
+  .hero { padding: 72px 0 56px; }
+  .hero h1 {
+    font-size: clamp(28px, 4.4vw, 42px); line-height: 1.18;
+    letter-spacing: -.015em; margin-bottom: 20px; font-weight: 700;
+  }
+  .hero h1 em { color: var(--acento); font-style: normal; }
+  .hero .entrada {
+    font-size: clamp(17px, 2.2vw, 20px); color: var(--tenue);
+    max-width: 62ch; margin-bottom: 32px;
+  }
+  .acciones { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .boton {
+    display: inline-block; background: var(--acento); color: #fff;
+    padding: 13px 26px; border-radius: 5px; text-decoration: none;
+    font-weight: 600; font-size: 15px; transition: opacity .2s;
+  }
+  .boton:hover { opacity: .88; }
+  .boton.secundario { background: transparent; color: var(--acento); border: 1px solid var(--acento); }
+
+  section { padding: 56px 0; border-top: 1px solid var(--linea); }
+  section h2 {
+    font-size: clamp(21px, 3vw, 27px); margin-bottom: 28px;
+    letter-spacing: -.01em; line-height: 1.28;
+  }
+  section h2 .num {
+    display: block; font-size: 12px; letter-spacing: .2em; color: var(--acento);
+    font-weight: 600; margin-bottom: 10px;
+  }
+
+  .problema p { font-size: 17px; color: var(--tenue); max-width: 68ch; }
+  .problema p + p { margin-top: 16px; }
+  .problema strong { color: var(--tinta); }
+
+  .lista-verdad { list-style: none; display: grid; gap: 18px; }
+  .lista-verdad li {
+    display: grid; grid-template-columns: 26px 1fr; gap: 14px;
+    align-items: start; font-size: 16px;
+  }
+  .lista-verdad .marca-si { color: #1a7f4b; font-weight: 700; font-size: 18px; }
+  .lista-verdad .marca-no { color: #b3261e; font-weight: 700; font-size: 18px; }
+  .lista-verdad b { display: block; margin-bottom: 2px; }
+  .lista-verdad span { color: var(--tenue); font-size: 15px; }
+
+  .ejemplo {
+    background: var(--suave); border: 1px solid var(--linea);
+    border-radius: 6px; padding: 22px 24px; margin-top: 8px;
+    font-size: 15px; color: var(--tenue);
+  }
+  .ejemplo .cita { font-style: italic; color: var(--tinta); }
+  .ejemplo .fuente {
+    display: block; margin-top: 10px; font-size: 13px;
+    color: var(--acento); font-family: "SF Mono", Consolas, monospace;
+  }
+
+  .precios { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .plan {
+    border: 1px solid var(--linea); border-radius: 6px; padding: 24px 22px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .plan.destacado { border-color: var(--acento); box-shadow: 0 0 0 1px var(--acento); }
+  .plan .nombre { font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .08em; }
+  .plan .monto { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .plan .monto small { font-size: 13px; font-weight: 500; color: var(--tenue); display: block; letter-spacing: 0; }
+  .plan ul { list-style: none; font-size: 14px; color: var(--tenue); display: grid; gap: 7px; }
+  .plan li::before { content: "— "; color: var(--acento); }
+
+  .aviso {
+    border-left: 3px solid var(--acento); padding: 16px 20px;
+    background: var(--suave); font-size: 15px; color: var(--tenue); margin-top: 24px;
+  }
+  .aviso b { color: var(--tinta); }
+
+  .cierre { text-align: center; padding: 72px 0; border-top: 1px solid var(--linea); }
+  .cierre h2 { margin-bottom: 16px; }
+  .cierre p { color: var(--tenue); max-width: 56ch; margin: 0 auto 28px; font-size: 16px; }
+
+  footer {
+    border-top: 1px solid var(--linea); padding: 28px 0;
+    font-size: 13px; color: var(--tenue);
+    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenedor">
+    <div class="marca">Roku<span>sho</span></div>
+    <div class="contacto">Christian Díaz · Villa Alemana, Chile</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="contenedor">
+    <h1>Informes que puedes <em>verificar</em>, no que tienes que creer.</h1>
+    <p class="entrada">
+      Cada dato de tu documento lleva la cita de dónde salió. Las cifras están
+      calculadas, no estimadas. Y cuando algo no está en el material, el informe
+      dice «no está» en lugar de rellenarlo.
+    </p>
+    <div class="acciones">
+      <a class="boton" href="#precios">Ver precios</a>
+      <a class="boton secundario" href="#como">Cómo funciona</a>
+    </div>
+  </div>
+</div>
+
+<section class="problema">
+  <div class="contenedor">
+    <h2><span class="num">01 — EL PROBLEMA</span>El trabajo que nadie alcanza a hacer</h2>
+    <p>
+      Los contratos se firman sin que nadie los lea en detalle. Las cifras se
+      copian a mano de una planilla a otra. Los informes se escriben la noche
+      antes porque no hubo otro momento.
+    </p>
+    <p>
+      No es falta de interés: es falta de horas. <strong>El trabajo pendiente no
+      es el trabajo que ya haces; es el que se quedó sin hacer.</strong>
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="contenedor">
+    <h2><span class="num">02 — LO QUE CAMBIA</span>Un documento en el que puedes confiar</h2>
+    <ul class="lista-verdad">
+      <li>
+        <span class="marca-si">✓</span>
+        <div>
+          <b>Cada dato tiene su fuente</b>
+          <span>El informe cita el documento y la línea de donde salió. Puedes ir a mirarlo.</span>
+        </div>
+      </li>
+      <li>
+        <span class="marca-si">✓</span>
+        <div>
+          <b>Las cuentas están hechas, no supuestas</b>
+          <span>Los montos se calculan con precisión decimal. No hay «más o menos».</span>
+        </div>
+      </li>
+      <li>
+        <span class="marca-si">✓</span>
+        <div>
+          <b>Lo que falta se dice</b>
+          <span>Si el contrato no menciona el IVA, el informe lo señala como ausencia. No lo inventa.</span>
+        </div>
+      </li>
+      <li>
+        <span class="marca-no">✕</span>
+        <div>
+          <b>No es asesoría legal</b>
+          <span>Es el insumo para que tú decidas. El criterio profesional sigue siendo tuyo.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="ejemplo">
+      Así se ve un dato dentro del informe:
+      <p style="margin-top:12px" class="cita">
+        «TERCERO: El monto mensual es de 850.000 pesos, pagaderos a 30 días.»
+      </p>
+      <span class="fuente">contrato.txt · línea 7 · dato verificado</span>
+      <p style="margin-top:14px">
+        Y lo que no aparece, se nombra así:
+        <span class="cita">«El contrato no indica moneda ni si el monto incluye IVA.»</span>
+        <span class="fuente">vacío documentado, no rellenado</span>
+      </p>
+    </div>
+
+    <p style="margin-top:22px">
+      <a class="boton secundario" href="muestra/ejemplo-informe.html" target="_blank" rel="noopener">
+        Ver un informe completo de ejemplo
+      </a>
+      <small style="display:block;margin-top:10px;color:#5b6472">
+        Documento real generado por Rokusho. Los datos del contrato son ficticios.
+      </small>
+    </p>
+  </div>
+</section>
+
+<section id="como">
+  <div class="contenedor">
+    <h2><span class="num">03 — CÓMO FUNCIONA</span>Cuatro pasos, sin sorpresas</h2>
+    <ul class="lista-verdad">
+      <li><span class="marca-si">1</span><div><b>Me pasas el material</b><span>Contratos, actas, planillas, lo que ya tienes.</span></div></li>
+      <li><span class="marca-si">2</span><div><b>Lo leo y te digo qué falta</b><span>Si el material no alcanza para el informe, se dice antes de empezar.</span></div></li>
+      <li><span class="marca-si">3</span><div><b>Produzco el entregable</b><span>5 días hábiles para el piloto, 7 para un encargo.</span></div></li>
+      <li><span class="marca-si">4</span><div><b>Lo revisas</b><span>Una ronda de correcciones incluida. Si no sirve, lo dices y no hay contrato.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<section id="precios">
+  <div class="contenedor">
+    <h2><span class="num">04 — PRECIOS</span>Se cobra por entregable</h2>
+    <div class="precios">
+      <div class="plan">
+        <div class="nombre">Piloto</div>
+        <div class="monto">8 UF <small>≈ $330.000</small></div>
+        <ul>
+          <li>Un informe de 5 a 15 páginas</li>
+          <li>Citas verificables</li>
+          <li>5 días hábiles</li>
+          <li>Una corrección incluida</li>
+        </ul>
+      </div>
+      <div class="plan destacado">
+        <div class="nombre">Encargo</div>
+        <div class="monto">18 UF <small>≈ $743.000 por entregable</small></div>
+        <ul>
+          <li>Varios documentos de un mismo corpus</li>
+          <li>Cálculo y verificación de cifras</li>
+          <li>7 días hábiles</li>
+          <li>Dos correcciones incluidas</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="nombre">Mensual</div>
+        <div class="monto">45 UF <small>≈ $1.857.000 al mes</small></div>
+        <ul>
+          <li>Hasta 4 entregables al mes</li>
+          <li>Memoria del negocio</li>
+          <li>Respuesta en 48 horas</li>
+          <li>Revisión mensual</li>
+        </ul>
+      </div>
+    </div>
+    <div class="aviso">
+      <b>Los valores en pesos son referenciales</b> y están calculados con la UF del
+      5 de noviembre de 2026 ($41.274,20). El precio que vale es el de la UF al
+      momento de cotizar. Los precios son una propuesta inicial: todavía
+      no hay ventas cerradas, así que puedo ajustarlos según tu caso.
+    </div>
+  </div>
+</section>
+
+<div class="cierre">
+  <div class="contenedor">
+    <h2>El piloto se paga solo si el resultado sirve.</h2>
+    <p>
+      Se elige una tarea concreta, se produce, y se compara con lo que cuesta hoy
+      hacerla. Si no convence, no hay contrato.
+    </p>
+    <a class="boton" href="mailto:christiandiazpin@gmail.com?subject=Piloto%20Rokusho">Hablar del piloto</a>
+  </div>
+</div>
+
+<footer>
+  <div class="contenedor" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;width:100%">
+    <span>Rokusho · informes con fuente verificable</span>
+    <span>christiandiazpin@gmail.com</span>
+  </div>
+</footer>
+
+</body>
+</html>
