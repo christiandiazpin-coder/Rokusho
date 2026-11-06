@@ -567,3 +567,58 @@ chileno.
 ```
 178 passed
 ```
+
+## 19. Pruebas de `piezas/dispositivo`: dos defectos que nunca se habían visto
+
+La pieza que habla con hardware era la única sin pruebas, y es la que más riesgo
+tiene: controla el diagnóstico de un aparato que alguien puede borrar.
+
+Las pruebas **no necesitan un aparato conectado**: simulan las respuestas de adb.
+Una prueba que exige hardware real no corre en integración continua y termina
+desactivándose, que es peor que no tenerla.
+
+### Defecto 1: la detección de MediaTek no funcionaba nunca
+
+```python
+mtk = [l for l in salida.splitlines() if f"ID {VID_MTK}:" in l.lower()]
+```
+
+El código bajaba a minúsculas **la salida** pero comparaba contra un patrón con
+`ID` en mayúscula. `"id 0e8d:"` nunca está dentro de `"ID 0e8d:"`.
+
+Consecuencia: `modo_mtk` respondía «no hay ningún aparato MediaTek» **siempre**,
+aunque el aparato estuviera conectado en BROM. El agente habría dicho que no se
+podía entrar, cuando sí.
+
+Corregido bajando ambos lados. Cubierto por `test_modo_mtk_con_aparato_en_brom`.
+
+Es el tipo de fallo que no se ve leyendo: el código «parece» correcto, y sin una
+prueba con una salida simulada no hay forma de notarlo.
+
+### Defecto 2: la pieza lanzaba una excepción en un caso previsible
+
+`_ejecutar` hacía `raise RuntimeError` cuando faltaba adb. El chasis atrapa las
+excepciones de herramienta, así que no rompía, pero obligaba al agente a tratar
+un caso previsible como fallo inesperado.
+
+Ahora devuelve el error como texto. Una herramienta no debe lanzar para informar
+de algo que se sabe de antemano.
+
+### Lo que las pruebas fijan, y por qué
+
+| Prueba | Qué protege |
+|---|---|
+| Sin adb → avisa, no inventa | El agente no afirma estado sin herramienta |
+| Aparato que no responde → ERROR | El caso peligroso: no suponer datos del equipo |
+| Sin propiedades → no identifica | No rellenar el modelo a partir del nombre comercial |
+| Arranque sin datos → no concluye | No afirmar «está desbloqueado» sin leerlo |
+| Ficha desconocida → lo dice | No inventar procesador ni método de desbloqueo |
+
+La última es la más importante: un modelo de tablet mal identificado y un método
+de desbloqueo supuesto es exactamente cómo se convierte un equipo en un ladrillo.
+
+## 20. Estado de las pruebas
+
+```
+211 passed
+```

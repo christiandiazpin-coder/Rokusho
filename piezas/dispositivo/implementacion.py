@@ -85,12 +85,17 @@ def _adb() -> str | None:
 
 
 def _ejecutar(argumentos: list[str]) -> tuple[int, str, str]:
+    """Ejecuta adb. Si falta la herramienta, devuelve un error en vez de lanzar.
+
+    Antes lanzaba RuntimeError. El chasis atrapa las excepciones de herramienta,
+    pero una excepción obliga al agente a interpretar el error como fallo de la
+    llamada; devolver el texto le permite decírselo al usuario con claridad.
+    Una herramienta no debe tumbar el turno para informar de algo previsible.
+    """
     binario = _adb()
     if not binario:
-        raise RuntimeError(
-            "adb no está instalado. Sin adb no se puede hablar con el aparato; "
-            "no supongas su estado."
-        )
+        return (1, "", "ERROR: adb no está instalado. Sin adb no se puede hablar "
+                       "con el aparato; no supongas su estado.")
     proceso = subprocess.run([binario, *argumentos], capture_output=True,
                              text=True, timeout=TIEMPO)
     return proceso.returncode, proceso.stdout, proceso.stderr
@@ -166,13 +171,18 @@ def _resumen_usb_mtk() -> str:
                                 timeout=TIEMPO).stdout
     except (OSError, subprocess.SubprocessError):
         return ""
-    mtk = [l for l in salida.splitlines() if f"ID {VID_MTK}:" in l.lower()]
+    # Se comparan AMBOS lados en minúsculas: antes solo se bajaba la salida y
+    # el patrón llevaba «ID» en mayúscula, así que la detección no encontraba
+    # nada nunca. Comprobado con una prueba que simula un aparato en BROM.
+    patron = f"id {VID_MTK}:".lower()
+    mtk = [l for l in salida.splitlines() if patron in l.lower()]
     if not mtk:
         return ""
     lineas = ["Detectado un aparato MediaTek en el bus USB:"]
     for l in mtk:
         lineas.append(f"  {l.strip()}")
-        identificador = l.split(f"{VID_MTK}:")[1].split()[0] if f"{VID_MTK}:" in l else ""
+        bajo = l.lower()
+        identificador = bajo.split(f"{VID_MTK}:")[1].split()[0] if f"{VID_MTK}:" in bajo else ""
         modo = MODOS_MTK.get(identificador.lower(), "")
         if modo:
             lineas.append(f"    modo: {modo}")
@@ -300,7 +310,11 @@ def modo_mtk() -> str:
     except (OSError, subprocess.SubprocessError) as e:
         return f"ERROR: no se pudo leer el bus USB: {e}"
 
-    mtk = [l for l in salida.splitlines() if f"ID {VID_MTK}:" in l.lower()]
+    # Se comparan AMBOS lados en minúsculas: antes solo se bajaba la salida y
+    # el patrón llevaba «ID» en mayúscula, así que la detección no encontraba
+    # nada nunca. Comprobado con una prueba que simula un aparato en BROM.
+    patron = f"id {VID_MTK}:".lower()
+    mtk = [l for l in salida.splitlines() if patron in l.lower()]
     if not mtk:
         return ("No hay ningún aparato MediaTek en modo BROM/Preloader.\n"
                 "Si el aparato está encendido normalmente, aparece por adb, no aquí.\n"
