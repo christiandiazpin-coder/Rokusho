@@ -796,8 +796,57 @@ correo directo, cuyo tope es 150.
 «recortar». El test pedía un resultado que el caso no produce. Corregido y
 separado en dos casos: se pasa en ambas, y se pasa en una.
 
-## 26. Estado de las pruebas
+## 26. Recolección de prospectos: cuatro defectos medidos
+
+Se construyó un recolector de prospectos desde directorios públicos chilenos,
+para tener una lista de contactos real. Regla que no se rompió: **cada ficha
+lleva la URL de donde salió**; ningún correo se adivina.
+
+### Solo una fuente sirve sin navegador
+
+| Fuente | Accesible | Nota |
+|---|---|---|
+| yelu.cl | sí | nombre, dirección, teléfono |
+| amarillas (emol y .cl) | no | requiere JavaScript |
+| 2x3, cylex, infoisinfo | no | requiere JavaScript |
+| Mercado Público | no | requiere JavaScript |
+
+### Resultado medido: 168 fichas en 10 ciudades
+
+| Ciudad | Fichas | Con teléfono |
+|---|---|---|
+| Antofagasta | 20 | 15 |
+| Concepción | 20 | 18 |
+| La Serena | 20 | 11 |
+| Puerto Montt | 20 | 11 |
+| Temuco | 20 | 10 |
+| Viña del Mar | 20 | 11 |
+| Rancagua | 15 | 12 |
+| Talca | 15 | 9 |
+| Iquique | 13 | 4 |
+| Valparaíso | 5 | 3 |
+| **Total** | **168** | **104** |
+
+Ninguna ficha trae correo: el directorio lo oculta tras un registro. **No se
+adivinó ninguno.**
+
+### Los cuatro defectos, encontrados comparando resultados
+
+1. **No extraía nada.** El directorio pone una línea vacía entre el número de
+   ficha y el nombre; el parser buscaba el nombre justo debajo y tomaba cadena
+   vacía.
+2. **Talca perdía 13 de 15 teléfonos.** El regex exigía 7 dígitos y los fijos de
+   las regiones pequeñas tienen 6.
+3. **Al corregir lo anterior se perdió otro formato:** Santiago usa código de
+   área de un dígito, `(2)232073038`. Viña del Mar bajó de 19 a 11.
+4. **Entraban fichas falsas.** «1,692 compañías» y «Map» figuraban como
+   empresas. Ese era el «19» de Viña: ocho eran ruido de paginación.
+
+Ninguno de los cuatro se veía leyendo el código. Los cuatro aparecieron al
+comparar la salida contra lo esperado.
+
+## 27. Estado de las pruebas
 
 ```
-294 passed
+312 passed
 ```
