@@ -105,7 +105,7 @@ y más lentos de convencer. **Para después de tener 3 clientes.**
 |---|---|---|---|
 | **Piloto** | 8 UF | 1 informe, 5-15 páginas, 5 días | Probar sin riesgo |
 | **Encargo** | 18 UF | Varios documentos de un corpus | Caso de uso real |
-| **Mensual** | 45 UF | Hasta 4 entregables/mes + memoria | Cliente recurrente |
+| **Mensual** | 45 UF | Hasta 3 entregables/mes + memoria | Cliente recurrente |
 
 ### La regla de escalada
 

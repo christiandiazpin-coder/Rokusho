@@ -49,7 +49,7 @@ un resultado real. Si no le sirve, no hay contrato y nadie perdió mucho.
 
 Para el cliente que produce todos los meses:
 
-- Hasta 4 entregables al mes
+- Hasta 3 entregables al mes
 - Memoria del negocio: no vuelve a explicar el contexto
 - Respuesta en 48 horas hábiles
 - Revisión mensual de lo entregado
@@ -62,6 +62,26 @@ hecho, porque el cliente todavía no tiene motivo para confiar.
 Regla: **el piloto se paga**. Regalarlo convierte la conversación en «a ver si
 me convence» y pone al vendedor a la defensiva. Un piloto pagado, aunque sea
 barato, cambia quién está evaluando a quién.
+
+### El piloto es de una sola vez por cliente
+
+8 UF es **precio de entrada, no tarifa**. Después del piloto, el cliente pasa a
+Encargo o a Mensual; no se repite el piloto.
+
+Sin esta regla la escalera no existe, y se ve con una suma:
+
+```
+3 pilotos × 8 UF = 24 UF
+Mensual (3 ent.) = 45 UF
+```
+
+Tres pilotos sueltos cuestan **21 UF menos** que el mensual y entregan la misma
+cantidad de informes. El cliente que divide compra pilotos y nunca contrata el
+mensual: el piloto deja de ser una puerta y pasa a ser la tarifa real del
+producto, y la escalera entera se vuelve decorativa.
+
+Con la regla, el piloto cumple su función —probar sin compromiso grande— y el
+crecimiento pasa por donde debe: Encargo o Mensual.
 
 ## Qué diferencia esto de contratar a alguien
 
