@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacidad — Rokusho</title>
+<meta name="description" content="Qué se mide en este sitio, qué no se mide y por qué. Sin cookies, sin identificadores personales, sin banner.">
+<meta name="robots" content="index">
+<link rel="canonical" href="https://christiandiazpin-coder.github.io/Rokusho/privacidad.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: only light;
+    --papel: #F6F2E9;
+    --papel-alto: #FCFAF5;
+    --tinta: #17140F;
+    --tinta-suave: #5A5245;
+    --tinta-tenue: #6E6455;
+    --linea: #E0D8C8;
+    --linea-fuerte: #CCC1AA;
+    --brasa: #8E3517;
+    --verde: #26603F;
+    --display: "Inter Tight", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: "Newsreader", Georgia, serif;
+    --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .envoltura { max-width: 720px; margin-inline: auto; padding: 56px 24px 80px; }
+
+  .marca {
+    display: inline-flex; align-items: baseline; gap: 7px;
+    font-weight: 600; font-size: 1.02rem;
+    text-decoration: none; color: inherit;
+    margin-bottom: 40px;
+  }
+  .marca::after {
+    content: ""; width: 5px; height: 5px;
+    background: var(--brasa); border-radius: 50%;
+    transform: translateY(-1px);
+  }
+  .sobretitulo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: .7rem;
+    letter-spacing: .18em; text-transform: uppercase;
+    color: var(--tinta-suave); margin-bottom: 22px;
+  }
+  .sobretitulo::before { content: ""; width: 34px; height: 1px; background: var(--brasa); }
+  h1 {
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 500; line-height: 1.08;
+    letter-spacing: -.032em; margin-bottom: 20px;
+    text-wrap: balance;
+  }
+  .entrada {
+    font-size: 1.1rem; color: var(--tinta-suave);
+    margin-bottom: 40px; max-width: 52ch;
+    text-wrap: pretty;
+  }
+  h2 {
+    font-size: 1.15rem; font-weight: 600;
+    letter-spacing: -.018em;
+    margin: 40px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--linea);
+  }
+  h2::before {
+    content: ""; display: block;
+    width: 26px; height: 2px;
+    background: var(--brasa); margin-bottom: 12px;
+  }
+  p { margin-bottom: 14px; color: var(--tinta-suave); text-wrap: pretty; }
+  strong { color: var(--tinta); font-weight: 600; }
+  ul { margin: 0 0 16px 20px; color: var(--tinta-suave); }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--brasa); }
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: #EDE5D6; padding: 2px 6px;
+    border-radius: 2px; border-bottom: 1px solid var(--linea-fuerte);
+    color: var(--tinta);
+  }
+  .caja {
+    border: 1px solid var(--linea);
+    border-left: 2px solid var(--brasa);
+    background: var(--papel-alto);
+    padding: 18px 20px;
+    margin: 20px 0;
+    font-size: .95rem;
+  }
+  .caja p:last-child { margin-bottom: 0; }
+  .caja-buena { border-left-color: var(--verde); }
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 18px 0 22px; font-size: .92rem;
+    border: 1px solid var(--linea);
+  }
+  th, td { border-bottom: 1px solid var(--linea); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: .68rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--tinta-tenue); background: var(--papel-alto);
+    font-weight: 500;
+  }
+  tr:last-child td { border-bottom: 0; }
+  .si { color: var(--verde); font-weight: 600; }
+  .no { color: var(--brasa); font-weight: 600; }
+  footer {
+    margin-top: 56px; padding-top: 18px;
+    border-top: 1px solid var(--linea-fuerte);
+    font-family: var(--mono); font-size: .72rem;
+    color: var(--tinta-tenue);
+    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  }
+  footer a { color: var(--tinta-suave); text-decoration: none; border-bottom: 1px solid var(--linea-fuerte); }
+</style>
+</head>
+<body>
+<div class="envoltura">
+
+  <a class="marca" href="index.html">Rokusho</a>
+
+  <p class="sobretitulo">Privacidad</p>
+  <h1>Qué mido de ti, y qué no.</h1>
+  <p class="entrada">
+    Este sitio no te pide datos, no te rastrea entre sitios y no usa cookies.
+    Lo único que se cuenta son visitas agregadas. Abajo está exactamente qué se
+    registra y qué no.
+  </p>
+
+  <div class="caja caja-buena">
+    <p><strong>En una línea:</strong> no hay cookies, no hay identificadores
+    personales, no hay banner de consentimiento — porque no hay nada que
+    consentir.</p>
+  </div>
+
+  <h2>Qué se registra</h2>
+  <table>
+    <thead>
+      <tr><th>Dato</th><th>¿Se registra?</th><th>Para qué</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Página visitada</td><td class="si">Sí</td><td>Saber qué sección se lee</td></tr>
+      <tr><td>Sitio de procedencia</td><td class="si">Sí</td><td>Saber de dónde llega la gente</td></tr>
+      <tr><td>País</td><td class="si">Sí</td><td>Saber si el sitio llega a Chile</td></tr>
+      <tr><td>Navegador y sistema</td><td class="si">Sí, agregado</td><td>Detectar problemas de compatibilidad</td></tr>
+      <tr><td>Tu dirección IP</td><td class="no">No se guarda</td><td>—</td></tr>
+      <tr><td>Cookies</td><td class="no">Ninguna</td><td>—</td></tr>
+      <tr><td>Identificador entre visitas</td><td class="no">Ninguno</td><td>—</td></tr>
+      <tr><td>Datos de formularios</td><td>No hay formularios</td><td>—</td></tr>
+      <tr><td>Rastreo en otros sitios</td><td class="no">Ninguno</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Quién lo procesa</h2>
+  <p>
+    La medición la hace <strong>GoatCounter</strong>, un servicio de analítica
+    de código abierto. No usa cookies y no construye un perfil de visitante.
+    Su política está en
+    <a href="https://www.goatcounter.com/privacy" target="_blank" rel="noopener">goatcounter.com/privacy</a>.
+  </p>
+  <p>
+    Las tipografías se cargan desde Google Fonts. Eso implica que tu navegador
+    se conecta a un servidor de Google para bajar los archivos de letra. No se
+    envía nada más.
+  </p>
+
+  <h2>Lo que me escribes por correo</h2>
+  <p>
+    Si me escribes a <strong>christiandiazpin@gmail.com</strong>, guardo ese
+    correo y lo que me cuentes para responderte y, si llegamos a trabajar
+    juntos, para hacer el trabajo. No lo uso para enviarte publicidad y no lo
+    comparto con terceros.
+  </p>
+  <p>
+    Si en algún momento quieres que borre tus correos, pídelo y los borro.
+  </p>
+
+  <h2>Documentos que me entregas</h2>
+  <p>
+    Cuando me pasas contratos, actas o planillas para producir un informe,
+    esos documentos <strong>no se publican</strong> y no se usan para otro
+    encargo. Cuando un informe se muestra como ejemplo en este sitio, se
+    anonimiza antes: se sustituyen nombres de las partes, direcciones,
+    teléfonos y correos por datos ficticios.
+  </p>
+
+  <h2>Tu derecho a que no te mida</h2>
+  <p>
+    Como no hay cookies ni identificadores, no hay nada que desactivar. Si aun
+    así prefieres que tu visita no se cuente, un bloqueador de anuncios o de
+    rastreadores como uBlock Origin bloquea el script de medición y el sitio
+    funciona exactamente igual.
+  </p>
+
+  <h2>Cambios</h2>
+  <p>
+    Si esta política cambia, cambia la fecha de abajo. No hay letra chica
+    aparte.
+  </p>
+
+  <footer>
+    <span>Última actualización: 7 de noviembre de 2026</span>
+    <span><a href="index.html">Volver al inicio</a></span>
+  </footer>
+
+</div>
+</body>
+</html>

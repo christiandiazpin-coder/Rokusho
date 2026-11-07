@@ -1186,6 +1186,7 @@ a.muestra__enlace:focus-visible { outline: 2px solid var(--brasa-clara); outline
 .pie a { text-decoration: none; border-bottom: 1px solid var(--linea-fuerte); padding-bottom: 1px; transition: border-color .2s linear, color .2s linear; }
 .pie a:hover { color: var(--brasa); border-color: var(--brasa); }
 .pie__meta { font-family: var(--mono); font-size: .715rem; letter-spacing: .03em; }
+.pie__sep { color: var(--linea-control); margin: 0 6px; }
 
 /* ---------- revelado ---------- */
 
@@ -1779,6 +1780,8 @@ a.muestra__enlace:focus-visible { outline: 2px solid var(--brasa-clara); outline
     </span>
     <span class="pie__meta">
       <a href="mailto:christiandiazpin@gmail.com">christiandiazpin@gmail.com</a>
+      <span class="pie__sep" aria-hidden="true">·</span>
+      <a href="privacidad.html">Privacidad</a>
     </span>
   </div>
 </footer>
@@ -1887,6 +1890,23 @@ a.muestra__enlace:focus-visible { outline: 2px solid var(--brasa-clara); outline
     });
   });
 })();
+</script>
+
+<!-- ===== Medicion =====================================================
+     GoatCounter: sin cookies, sin identificadores personales, sin banner.
+     El codigo se reemplaza cuando exista la cuenta (ver LEEME.txt).
+     Mientras el codigo sea el marcador PENDIENTE, el script no se carga.
+     ==================================================================== -->
+<script>
+  (function () {
+    var CODIGO = "PENDIENTE"; // <- reemplazar por el codigo real de goatcounter
+    if (CODIGO === "PENDIENTE") return;
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://gc.zgo.at/count.js";
+    s.setAttribute("data-goatcounter", "https://" + CODIGO + ".goatcounter.com/count");
+    document.head.appendChild(s);
+  })();
 </script>
 </body>
 </html>
