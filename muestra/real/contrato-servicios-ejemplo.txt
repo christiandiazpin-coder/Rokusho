@@ -5,13 +5,13 @@ This Contractor Payment Addendum (“Addendum”) is entered into as of November
 2024 (the “Effective Date” ), between:
 
 
-Meridian Language Services, LLC, a company having its principal place of business at whose registered office is
-at 2200 Summit Ave, Suite 410, Denver, United States, 80202, and email:
-icpayments@meridian-ls.com, (“Client”), and
+Horizon Language Partners, LLC, a company having its principal place of business at whose registered office is
+at 1400 Example Ave, Suite 200, Example City, United States, 00000, and email:
+payments@horizon-lp.example, (“Client”), and
 
 
-Javier Molina, having its principal place of business at Los Aromos 1234, Quilpué, 6530000,
-9 8765 4321 and email address: j.molina@ejemplo.cl, (“Contractor”).
+Andrés Soto, having its principal place of business at Calle Ficticia 4321, Villa Ejemplo, 0000000,
++56 9 0000 0000 and email address: a.soto@ejemplo.cl, (“Contractor”).
 
 
 Client and Contractor have separately entered in to an agreement or agreements, as
@@ -27,8 +27,8 @@ NOW, THEREFORE, the parties agree as follows:
  CLIENT                                          CONTRACTOR
 
 
-          Meridian
- Signature:                                      Signature:   Javier Molina
+          Horizon
+ Signature:                                      Signature:   Andrés Soto
  Onboarding Team
  Date: December 5th, 2024                        Date: December 5th, 2024
                                       EXHIBIT A
@@ -78,7 +78,7 @@ Contractor Agreement dated as of December 5, 2024, between Client and Contractor
 CLIENT                                             CONTRACTOR
 
 
-Signature:    Onboarding Team               Signature:   Javier Molina
+Signature:    Onboarding Team               Signature:   Andrés Soto
 
 
 

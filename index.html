@@ -831,10 +831,21 @@ a { color: inherit; }
 .interfaz__visor {
   border: 1px solid var(--linea-fuerte);
   border-radius: 4px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: var(--noche);
   box-shadow: 0 24px 60px -30px rgba(23,20,15,.5);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--linea-control) transparent;
 }
+.interfaz__visor::-webkit-scrollbar { height: 9px; }
+.interfaz__visor::-webkit-scrollbar-thumb {
+  background: var(--linea-control);
+  border-radius: 9px;
+}
+/* La captura no se encoge hasta ser ilegible: bajo 720px se mantiene a un ancho
+   donde el texto de la interfaz sigue leyendose, y el visor se desplaza. */
 .interfaz__visor img {
   display: block;
   width: 100%;
@@ -842,6 +853,9 @@ a { color: inherit; }
   aspect-ratio: 1600 / 1000;
   object-fit: cover;
   background: var(--papel);
+}
+@media (max-width: 720px) {
+  .interfaz__visor img { width: 1000px; max-width: none; }
 }
 /* Ocultas por defecto: sin JS se ve la primera y las demás quedan inaccesibles,
    por eso la primera se marca como visible también en el HTML. */
@@ -867,6 +881,21 @@ a { color: inherit; }
   max-width: 74ch;
 }
 .interfaz__nota b { color: var(--tinta-suave); font-weight: 600; }
+
+/* solo aparece donde la captura necesita desplazarse */
+.interfaz__arrastra {
+  display: none;
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+  margin: 14px 0 10px;
+}
+@media (max-width: 720px) {
+  .interfaz__arrastra { display: block; }
+}
+@media print { .interfaz__arrastra { display: none; } }
 
 @media (max-width: 720px) {
   .interfaz__tabs { gap: 6px; }
@@ -1508,7 +1537,8 @@ a.muestra__enlace:focus-visible { outline: 2px solid var(--brasa-clara); outline
           <p class="muestra__etiqueta">Caso real · anonimizado</p>
           <h3 class="muestra__titulo">Contrato de servicios (inglés)</h3>
           <p class="muestra__desc">
-            Un addendum de pago real, con nombres y direcciones sustituidos. El sistema encontró
+            Un addendum de pago real. Nombres de las partes, direcciones, teléfono y correos
+            fueron sustituidos por datos ficticios antes de publicarlo. El sistema encontró
             tres fechas de inicio distintas y comprobó que la tarifa no está en el documento.
           </p>
           <p class="muestra__cifras">
@@ -1568,6 +1598,8 @@ a.muestra__enlace:focus-visible { outline: 2px solid var(--brasa-clara); outline
         <button class="interfaz__tab" role="tab" id="tab-03" aria-controls="panel-03" aria-selected="false">El agente trabajando</button>
         <button class="interfaz__tab" role="tab" id="tab-04" aria-controls="panel-04" aria-selected="false">Cierre y verificación</button>
       </div>
+
+      <p class="interfaz__arrastra">Desliza la captura para verla completa →</p>
 
       <div class="interfaz__visor revelar" style="--i:4">
         <div class="interfaz__panel" id="panel-01" role="tabpanel" aria-labelledby="tab-01" data-pie="El informe y su evidencia: cada cifra con la cita de la línea de la que sale.">
