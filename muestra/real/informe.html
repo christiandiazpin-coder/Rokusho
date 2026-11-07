@@ -1,77 +1,260 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-CL">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Informe de lectura y cálculo — Contractor Payment Addendum REF: EJ-2024-017</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* ============================================================
+     ROKUSHO · informe de lectura
+     Mismo sistema visual que la portada: papel, tinta y brasa.
+     Tres roles tipograficos: display, serif editorial y mono de dato.
+     ============================================================ */
   :root {
-    --tinta: #1a1a1a;
-    --tenue: #5f6368;
-    --linea: #d8dce0;
-    --acento: #1f4e79;
-    --fondo: #ffffff;
+    color-scheme: only light;
+
+    --papel:        #F6F2E9;
+    --papel-alto:   #FCFAF5;
+    --noche:        #14110C;
+    --tinta:        #17140F;
+    --tinta-suave:  #5A5245;
+    --tinta-tenue:  #6E6455;
+    --linea:        #E0D8C8;
+    --linea-fuerte: #CCC1AA;
+    --brasa:        #8E3517;
+    --brasa-clara:  #C4623D;
+    --verde:        #26603F;
+
+    --display: "Inter Tight", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --texto:   "Inter Tight", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif:   "Newsreader", Georgia, "Times New Roman", serif;
+    --mono:    "JetBrains Mono", "SF Mono", Consolas, monospace;
   }
+
   * { box-sizing: border-box; }
+
   body {
-    margin: 0; padding: 48px 56px;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 15px; line-height: 1.62; color: var(--tinta);
-    background: var(--fondo);
-    max-width: 860px; margin-inline: auto;
+    margin: 0;
+    padding: 56px 56px 72px;
+    font-family: var(--texto);
+    font-size: 15.5px;
+    line-height: 1.62;
+    color: var(--tinta);
+    background: var(--papel);
+    max-width: 880px;
+    margin-inline: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  header { border-bottom: 2px solid var(--acento); padding-bottom: 18px; margin-bottom: 32px; }
+
+  /* ---------- cabecera ---------- */
+
+  header {
+    border-bottom: 1px solid var(--linea-fuerte);
+    padding-bottom: 22px;
+    margin-bottom: 36px;
+  }
   header .marca {
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase;
-    color: var(--tenue); margin-bottom: 10px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    font-family: var(--texto);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    text-transform: none;
+    color: var(--tinta);
+    margin-bottom: 16px;
   }
-  header h1 { font-size: 26px; margin: 0 0 8px; line-height: 1.25; color: var(--acento); }
+  header .marca::after {
+    content: "";
+    width: 5px; height: 5px;
+    background: var(--brasa);
+    border-radius: 50%;
+    transform: translateY(-1px);
+  }
+  header h1 {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: -.028em;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    color: var(--tinta);
+    text-wrap: balance;
+  }
   header .meta {
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size: 11.5px; color: var(--tenue); display: flex; gap: 18px; flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .02em;
+    color: var(--tinta-tenue);
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
   }
+
+  /* ---------- encabezados ---------- */
+
   h2 {
-    font-size: 18px; margin: 32px 0 12px; color: var(--acento);
-    border-bottom: 1px solid var(--linea); padding-bottom: 6px;
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.018em;
+    line-height: 1.3;
+    margin: 40px 0 14px;
+    color: var(--tinta);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--linea);
   }
-  h3 { font-size: 15.5px; margin: 24px 0 8px; }
-  h4 { font-size: 14px; margin: 20px 0 6px; color: var(--tenue); }
-  p { margin: 0 0 12px; }
-  ul, ol { margin: 0 0 14px; padding-left: 24px; }
-  li { margin-bottom: 5px; }
+  h2::before {
+    content: "";
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--brasa);
+    margin-bottom: 12px;
+  }
+  h3 {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -.012em;
+    margin: 26px 0 10px;
+    color: var(--tinta);
+  }
+  h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin: 22px 0 8px;
+    color: var(--brasa);
+  }
+
+  /* ---------- texto ---------- */
+
+  p { margin: 0 0 13px; text-wrap: pretty; }
+  ul, ol { margin: 0 0 15px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  li::marker { color: var(--brasa); }
+  strong { font-weight: 600; color: var(--tinta); }
+
+  a {
+    color: var(--brasa);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(142,53,23,.35);
+    transition: border-color .2s linear;
+  }
+  a:hover { border-bottom-color: var(--brasa); }
+
+  /* ---------- tablas ---------- */
+
   table {
-    width: 100%; border-collapse: collapse; margin: 14px 0 20px;
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 13px;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 22px;
+    font-family: var(--texto);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    border: 1px solid var(--linea);
   }
-  th, td { border: 1px solid var(--linea); padding: 8px 11px; text-align: left; vertical-align: top; }
-  th { background: #f3f5f7; font-weight: 600; }
-  hr { border: 0; border-top: 1px solid var(--linea); margin: 26px 0; }
+  th, td {
+    border-bottom: 1px solid var(--linea);
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--papel-alto);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--tinta-tenue);
+  }
+  tr:last-child td { border-bottom: 0; }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--linea);
+    margin: 30px 0;
+  }
+
+  /* ---------- citas: el corazon del documento ---------- */
+
   blockquote {
-    margin: 14px 0; padding: 10px 16px; border-left: 3px solid var(--acento);
-    background: #f7f9fb; color: var(--tenue); font-style: italic;
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-left: 2px solid var(--brasa);
+    background: var(--papel-alto);
+    color: var(--tinta-suave);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.55;
   }
+  blockquote em { font-style: italic; }
+
   code {
-    font-family: "SF Mono", Consolas, monospace; font-size: 12.5px;
-    background: #f1f3f5; padding: 1px 5px; border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: #EDE5D6;
+    color: var(--tinta);
+    padding: 2px 6px;
+    border-radius: 2px;
+    border-bottom: 1px solid var(--linea-fuerte);
   }
+
+  /* ---------- pie ---------- */
+
   footer {
-    margin-top: 48px; padding-top: 14px; border-top: 1px solid var(--linea);
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size: 10.5px; color: var(--tenue); line-height: 1.6;
+    margin-top: 52px;
+    padding-top: 18px;
+    border-top: 1px solid var(--linea-fuerte);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .02em;
+    color: var(--tinta-tenue);
+    line-height: 1.7;
   }
-  @page { margin: 18mm; }
+  footer a { color: var(--tinta-tenue); border-bottom-color: var(--linea-fuerte); }
+
+  /* ---------- impresion ---------- */
+
+  @page { margin: 17mm; }
   @media print {
-    body { padding: 0; max-width: none; font-size: 11pt; }
+    body {
+      padding: 0;
+      max-width: none;
+      font-size: 10.5pt;
+      background: #fff;
+    }
+    a { color: var(--tinta); border-bottom: 0; }
     h2 { page-break-after: avoid; }
+    h3, h4 { page-break-after: avoid; }
     table, blockquote { page-break-inside: avoid; }
+    blockquote { background: #FAF7F0; }
+    th { background: #F4EFE6; }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 32px 20px 48px; font-size: 15px; }
+    header h1 { font-size: 24px; }
+    h2 { font-size: 17px; }
+    table { font-size: 12.5px; }
+    th, td { padding: 8px 9px; }
   }
 </style>
 </head>
 <body>
 <header>
   <div class="marca">Rokusho</div>
-  <h1>Informe de lectura y cálculo — Contractor Payment Addendum REF: EJ-2024-017</h1>
+  
   <div class="meta"><span>2026-11-06 10:31</span><span>Horizon Language Partners, LLC / Andrés Soto</span></div>
 </header>
 <main>
