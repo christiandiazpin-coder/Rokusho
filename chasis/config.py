@@ -67,6 +67,13 @@ class Ajustes:
     temperatura: float = 0.2
     max_pasos: int = 8
     idioma: str = "es"
+    max_tokens_turno: int | None = None
+
+    def __post_init__(self) -> None:
+        if self.max_tokens_turno is not None and (
+            type(self.max_tokens_turno) is not int or self.max_tokens_turno <= 0
+        ):
+            raise ValueError("ROKUSHO_MAX_TOKENS_TURNO debe ser un entero positivo")
 
     @classmethod
     def desde_entorno(cls) -> "Ajustes":
@@ -78,10 +85,16 @@ class Ajustes:
             "openrouter": ("https://openrouter.ai/api/v1", "google/gemma-4-31b-it:free"),
         }
         base_url, modelo = otros.get(proveedor, (base.base_url, base.modelo))
+        limite_tokens = os.getenv("ROKUSHO_MAX_TOKENS_TURNO")
+        try:
+            max_tokens_turno = int(limite_tokens) if limite_tokens is not None else None
+        except ValueError as e:
+            raise ValueError("ROKUSHO_MAX_TOKENS_TURNO debe ser un entero positivo") from e
         return cls(
             proveedor=proveedor,
             base_url=os.getenv("ROKUSHO_BASE_URL", base_url),
             modelo=os.getenv("ROKUSHO_MODELO", modelo),
             temperatura=float(os.getenv("ROKUSHO_TEMPERATURA", base.temperatura)),
             max_pasos=int(os.getenv("ROKUSHO_MAX_PASOS", base.max_pasos)),
+            max_tokens_turno=max_tokens_turno,
         )

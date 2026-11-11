@@ -26,6 +26,7 @@ class Respuesta:
     modelo: str
     tokens_entrada: int = 0
     tokens_salida: int = 0
+    uso_disponible: bool = False
 
 
 class ClienteIA:
@@ -97,10 +98,22 @@ class ClienteIA:
                          or mensaje.get("reasoning") or "")
 
         uso = datos.get("usage") or {}
+        def contar(valor) -> int | None:
+            # Algunos proveedores devuelven los enteros como cadenas.
+            if type(valor) is int and valor >= 0:
+                return valor
+            if isinstance(valor, str) and valor.isascii() and valor.isdecimal():
+                return int(valor)
+            return None
+
+        entrada = contar(uso.get("prompt_tokens"))
+        salida = contar(uso.get("completion_tokens"))
+        uso_disponible = entrada is not None and salida is not None
         return Respuesta(
             contenido=contenido,
             llamadas=mensaje.get("tool_calls") or [],
             modelo=datos.get("model", self.ajustes.modelo),
-            tokens_entrada=int(uso.get("prompt_tokens") or 0),
-            tokens_salida=int(uso.get("completion_tokens") or 0),
+            tokens_entrada=entrada if entrada is not None else 0,
+            tokens_salida=salida if salida is not None else 0,
+            uso_disponible=uso_disponible,
         )

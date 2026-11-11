@@ -74,7 +74,11 @@ def cmd_ver(args: argparse.Namespace) -> int:
         print(_color(f"Error: {e}", "31"), file=sys.stderr)
         return 2
 
-    agente = Agente(medalla, piezas)
+    try:
+        agente = Agente(medalla, piezas)
+    except ValueError as e:
+        print(_color(f"Error de configuración: {e}", "31"), file=sys.stderr)
+        return 2
     print(agente.sistema())
     return 0
 
@@ -99,7 +103,11 @@ def cmd_trabajar(args: argparse.Namespace) -> int:
             if pieza.configurar is not None:
                 pieza.configurar(carpeta)
 
-    agente = Agente(medalla, piezas)
+    try:
+        agente = Agente(medalla, piezas)
+    except ValueError as e:
+        print(_color(f"Error de configuración: {e}", "31"), file=sys.stderr)
+        return 2
     print(_color(f"Medalla: {medalla.nombre}   Piezas: {', '.join(p.nombre for p in piezas) or '(ninguna)'}", "36"))
     print(_color(f"Modelo: {agente.ajustes.modelo}", "90"))
     print()
@@ -125,13 +133,14 @@ def cmd_trabajar(args: argparse.Namespace) -> int:
     print(_color(
         f"— modelo: {turno.modelo} · tokens: {turno.tokens_entrada} entrada / "
         f"{turno.tokens_salida} salida · pasos: {len(turno.pasos)}", "90"))
-    return 0
+    return 4 if turno.incompleto else 0
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
         prog="rokusho",
-        description="Chasis modular de agentes: le pones una medalla y cambia de oficio.")
+        description="Chasis modular de agentes: le pones una medalla y cambia de oficio.",
+        epilog="Control de consumo y auditoría: consulta docs/control-turnos.md.")
     sub = p.add_subparsers(dest="comando", required=True)
 
     sub.add_parser("medallas", help="Lista las medallas instaladas").set_defaults(func=cmd_medallas)
