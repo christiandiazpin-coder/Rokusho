@@ -413,6 +413,7 @@ def contar_palabras(texto: str) -> str:
     lineas = texto.splitlines() or [texto]
     conteo_lineas = [len(_palabras(l)) for l in lineas]
     total = sum(conteo_lineas)
+    caracteres_sin_espacios = len(re.sub(r"\s", "", texto))
 
     # Se informan los dos criterios porque difieren en textos con signos sueltos
     # o marcadores. Ocultar la diferencia haría que el número pareciera un error
@@ -428,7 +429,7 @@ def contar_palabras(texto: str) -> str:
         f"Conteo del texto:\n"
         f"  palabras: {total}\n"
         f"  caracteres (con espacios): {len(texto)}\n"
-        f"  caracteres (sin espacios): {len(re.sub(r'\s', '', texto))}\n"
+        f"  caracteres (sin espacios): {caracteres_sin_espacios}\n"
         f"  líneas: {len(lineas)}\n"
         f"  palabras por línea: {conteo_lineas}\n"
         f"  suma de las líneas: {total} (debe coincidir con el total)\n"

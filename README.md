@@ -20,8 +20,21 @@ Ninguna de las tres está cableada. Cambiar de rubro es cambiar de carpeta.
 
 ## Arrancar
 
-Hace falta Python 3.11 o superior (`tomllib`). Sin dependencias más allá de
-`requests` y, para la pieza de medios, `PIL` y `numpy`.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:8fda1a873f0878b7c139a0e22ce88bbb5290be526939ddf89d4d2f4fd7efcf77 -->
+
+Rokusho necesita Python 3.11 o superior. Instala las versiones fijadas del proyecto en un entorno virtual:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+La pieza web bloquea redes internas por defecto; las excepciones y sus límites se describen en [operación de la pieza web](docs/operacion-web.md).
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ```bash
 # Qué hay instalado
@@ -154,8 +167,10 @@ sale.
 python -m pytest pruebas/ -q
 ```
 
-133 pruebas. Cubren el chasis (carga de medallas y piezas, ejecución del agente,
-herramientas que fallan sin tumbar el turno), las cinco piezas base y la de
-medios. La pieza `web` se prueba contra un servidor HTTP local, no contra
-internet: una prueba que falla porque un sitio externo cambió no dice nada del
-código.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:7a0ad249be52e8caf1c845a48da2feff0f3fbab0aec42b3e5c1de185435b7c92 -->
+
+Las pruebas cubren el chasis y las piezas con datos de control. La pieza web usa servidores locales y la pieza de medios necesita FFmpeg; las pruebas HTTPS necesitan OpenSSL. GitHub Actions ejecuta la suite con Python 3.11 y 3.14 en cada push y pull request.
+
+<!-- /coderabbit-ai-generated:v1 -->
