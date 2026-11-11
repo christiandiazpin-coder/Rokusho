@@ -63,6 +63,8 @@ class Turno:
     # Auditoría del propio turno: se calcula al cerrarlo, no se pide.
     avisos: list = field(default_factory=list)
     procedencia: dict = field(default_factory=dict)
+    auditoria_error: bool = False
+    incompleto: bool = False
 
     @property
     def uso_herramientas(self) -> list[str]:
@@ -71,7 +73,7 @@ class Turno:
     @property
     def limpio(self) -> bool:
         """Verdadero si el reporte no tiene afirmaciones sin respaldo."""
-        return not self.avisos
+        return not self.auditoria_error and not self.avisos
 
 
 class Agente:
@@ -117,6 +119,14 @@ class Agente:
         pasos: list[Paso] = []
         entrada = salida = 0
         modelo_usado = ""
+        limite_tokens = self.ajustes.max_tokens_turno
+
+        def cerrar(texto: str, *, incompleto: bool = False, aviso: str = "") -> Turno:
+            turno = self._cerrar(texto, pasos, modelo_usado, entrada, salida)
+            turno.incompleto = incompleto
+            if aviso:
+                turno.respuesta = (turno.respuesta + "\n\n" + aviso).strip()
+            return turno
 
         for numero in range(1, limite + 1):
             respuesta: Respuesta = self.cliente.conversar(mensajes, esquemas)
@@ -124,10 +134,25 @@ class Agente:
             salida += respuesta.tokens_salida
             modelo_usado = respuesta.modelo
 
+            if limite_tokens is not None:
+                if not respuesta.uso_disponible:
+                    aviso = ("AVISO: el proveedor no informó el consumo de tokens; "
+                             "no se puede controlar el presupuesto de este encargo.")
+                    if respuesta.llamadas:
+                        return cerrar("El encargo quedó incompleto; no se ejecutaron las "
+                                      "herramientas solicitadas en la última respuesta.",
+                                      incompleto=True, aviso=aviso)
+                    return cerrar(respuesta.contenido.strip(), aviso=aviso)
+                if entrada + salida >= limite_tokens and respuesta.llamadas:
+                    return cerrar("El encargo quedó incompleto; se alcanzó el límite de tokens "
+                                  "y no se ejecutaron las herramientas solicitadas en la "
+                                  "última respuesta.", incompleto=True)
+
             if not respuesta.llamadas:
-                return self._cerrar(
-                    respuesta.contenido.strip(), pasos, modelo_usado,
-                    entrada, salida)
+                aviso = ""
+                if limite_tokens is not None and entrada + salida > limite_tokens:
+                    aviso = "AVISO: esta respuesta superó el límite de tokens configurado."
+                return cerrar(respuesta.contenido.strip(), aviso=aviso)
 
             mensajes.append({
                 "role": "assistant",
@@ -155,8 +180,15 @@ class Agente:
         cierre = self.cliente.conversar(mensajes, None)
         entrada += cierre.tokens_entrada
         salida += cierre.tokens_salida
-        return self._cerrar(cierre.contenido.strip(), pasos,
-                            cierre.modelo or modelo_usado, entrada, salida)
+        modelo_usado = cierre.modelo or modelo_usado
+        aviso = ""
+        if limite_tokens is not None:
+            if not cierre.uso_disponible:
+                aviso = ("AVISO: el proveedor no informó el consumo de tokens; "
+                         "no se puede controlar el presupuesto de este encargo.")
+            elif entrada + salida > limite_tokens:
+                aviso = "AVISO: esta respuesta superó el límite de tokens configurado."
+        return cerrar(cierre.contenido.strip(), aviso=aviso)
 
     def _cerrar(self, respuesta: str, pasos: list[Paso], modelo: str,
                 entrada: int, salida: int) -> Turno:
@@ -173,12 +205,16 @@ class Agente:
             turno.avisos = auditoria.avisos
             if not auditoria.limpia:
                 turno.respuesta = respuesta + "\n" + _auditoria.formatear(auditoria)
+        except Exception:  # noqa: BLE001 - auditar no debe tumbar la entrega
+            turno.auditoria_error = True
+            turno.respuesta += "\n\nAVISO: la auditoría no pudo completarse; revisa el resultado."
+        try:
             salidas = [p.resultado or "" for p in pasos]
             proc = _procedencia.etiquetar(respuesta, salidas)
             turno.procedencia = _procedencia.resumen(proc)
-        except Exception:  # noqa: BLE001 - auditar no debe tumbar la entrega
-            # Si la auditoría falla, el turno se entrega sin ella, pero se dice.
-            turno.procedencia = {"error": "la auditoría no pudo ejecutarse"}
+        except Exception:  # noqa: BLE001 - informar sin perder la respuesta
+            turno.procedencia = {"error": "la procedencia no pudo calcularse"}
+            turno.respuesta += "\n\nAVISO: no se pudo calcular la procedencia de los datos."
         return turno
 
     def _desglosar(self, llamada: dict) -> tuple[str, dict[str, Any], str]:
